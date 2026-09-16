@@ -16,6 +16,30 @@
     </div>
 </header>
 
+<section class="catalog">
+    <div class="section-head">
+        <h2>Payment details</h2>
+    </div>
+    <form method="POST" action="{{ route('admin.payment-methods.update') }}" class="auth-card">
+        @csrf
+        @method('PUT')
+        @foreach ($paymentMethods as $method)
+            <fieldset>
+                <legend>{{ $method['name'] }}</legend>
+                <label>
+                    <span>Number / wallet</span>
+                    <input class="field-pill" name="{{ $method['key'] }}_number" value="{{ old($method['key'].'_number', $method['number']) }}" required maxlength="30">
+                </label>
+                <label>
+                    <span>Account name</span>
+                    <input class="field-pill" name="{{ $method['key'] }}_name" value="{{ old($method['key'].'_name', $method['account_name']) }}" required maxlength="100">
+                </label>
+            </fieldset>
+        @endforeach
+        <button class="btn btn-primary" type="submit">Save payment details</button>
+    </form>
+</section>
+
 <section class="clay-sheet">
     <h2>Payment requests</h2>
     @forelse ($pendingPurchases as $purchase)

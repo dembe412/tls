@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('index');
+        Route::put('/payment-methods', [AdminController::class, 'updatePaymentMethods'])->name('payment-methods.update');
         Route::post('/purchases/{purchase}/activate', [AdminController::class, 'activate'])->name('activate');
         Route::post('/purchases/{purchase}/reject', [AdminController::class, 'reject'])->name('reject');
         Route::post('/clients/{user}/locks', [AdminController::class, 'addLock'])->name('add-lock');

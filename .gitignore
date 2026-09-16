@@ -8,6 +8,8 @@
 .phpactor.json
 .phpunit.result.cache
 /.codex
+/.agents
+skills-lock.json
 /.cursor/
 /.idea
 /.nova

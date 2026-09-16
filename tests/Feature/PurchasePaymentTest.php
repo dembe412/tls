@@ -43,6 +43,38 @@ class PurchasePaymentTest extends TestCase
             ->assertSee($user->phone);
     }
 
+    public function test_admin_can_update_mobile_money_details_used_at_checkout(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $user = User::factory()->create();
+        $product = Product::query()->where('name', 'TS-30')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->put(route('admin.payment-methods.update'), [
+                'airtel_number' => '0743001481',
+                'airtel_name' => 'TSL Airtel',
+                'mtn_number' => '0783563733',
+                'mtn_name' => 'TSL MTN',
+            ])
+            ->assertRedirect();
+
+        $this->actingAs($user)
+            ->get(route('locks.pay', $product))
+            ->assertOk()
+            ->assertSee('0743001481')
+            ->assertSee('TSL Airtel');
+
+        $this->actingAs($user)
+            ->post(route('locks.request', $product), [
+                'payment_method' => 'airtel',
+                'transaction_id' => 'UPDATED4455',
+                'confirmed' => '1',
+            ])
+            ->assertRedirect(route('account'));
+
+        $this->assertSame('0743001481', Purchase::query()->firstOrFail()->payment_number);
+    }
+
     public function test_member_can_submit_a_transaction_id_with_their_name(): void
     {
         $user = User::factory()->create(['name' => 'Brian Juuko']);

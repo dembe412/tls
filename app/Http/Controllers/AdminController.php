@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\BonusRedemption;
 use App\Models\NewsArticle;
+use App\Models\PaymentSetting;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\User;
 use App\Models\Withdrawal;
 use App\Support\Money;
+use App\Support\PaymentMethods;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -29,7 +31,27 @@ class AdminController extends Controller
             'pendingBonuses' => BonusRedemption::query()->with('user')->where('status', 'pending')->latest()->get(),
             'activeValue' => Money::ugx($purchases->where('status', 'active')->sum('principal')),
             'articles' => NewsArticle::query()->with('author')->latest('published_at')->get(),
+            'paymentMethods' => PaymentMethods::all(),
         ]);
+    }
+
+    public function updatePaymentMethods(Request $request)
+    {
+        $data = $request->validate([
+            'airtel_number' => ['required', 'string', 'max:30'],
+            'airtel_name' => ['required', 'string', 'max:100'],
+            'mtn_number' => ['required', 'string', 'max:30'],
+            'mtn_name' => ['required', 'string', 'max:100'],
+        ]);
+
+        foreach ($data as $key => $value) {
+            PaymentSetting::query()->updateOrCreate(
+                ['key' => $key],
+                ['value' => trim($value)],
+            );
+        }
+
+        return back()->with('success', 'Payment details updated.');
     }
 
     public function activate(Purchase $purchase)

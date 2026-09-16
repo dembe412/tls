@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\PaymentSetting;
+
 class PaymentMethods
 {
     /**
@@ -9,7 +11,17 @@ class PaymentMethods
      */
     public static function all(): array
     {
-        return config('payments.methods', []);
+        return collect(config('payments.methods', []))
+            ->map(function (array $method): array {
+                $key = $method['key'];
+
+                return [
+                    ...$method,
+                    'number' => PaymentSetting::valueFor($key.'_number', $method['number']),
+                    'account_name' => PaymentSetting::valueFor($key.'_name', $method['account_name']),
+                ];
+            })
+            ->all();
     }
 
     /**
