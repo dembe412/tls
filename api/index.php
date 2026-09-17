@@ -3,7 +3,16 @@
 $runtimeStorage = '/tmp/laravel-storage';
 $runtimeCache = '/tmp/laravel-cache';
 
-foreach ([$runtimeStorage, $runtimeCache] as $directory) {
+$requiredDirectories = [
+    $runtimeStorage.'/framework/views',
+    $runtimeStorage.'/framework/sessions',
+    $runtimeStorage.'/framework/cache',
+    $runtimeStorage.'/framework/cache/data',
+    $runtimeStorage.'/logs',
+    $runtimeCache,
+];
+
+foreach ($requiredDirectories as $directory) {
     if (! is_dir($directory)) {
         mkdir($directory, 0755, true);
     }
@@ -26,4 +35,13 @@ foreach ($runtimeEnvironment as $key => $value) {
     $_SERVER[$key] = $value;
 }
 
-require __DIR__.'/../public/index.php';
+try {
+    require __DIR__.'/../public/index.php';
+} catch (Throwable $e) {
+    error_log('Vercel Laravel Error: '.$e->getMessage().' in '.$e->getFile().':'.$e->getLine());
+    if (getenv('APP_DEBUG') === 'true' || ($_ENV['APP_DEBUG'] ?? false) === 'true') {
+        echo '<h1>Startup Exception</h1><p>'.htmlspecialchars($e->getMessage()).'</p><pre>'.htmlspecialchars($e->getTraceAsString()).'</pre>';
+    } else {
+        throw $e;
+    }
+}
