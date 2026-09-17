@@ -60,41 +60,46 @@ return [
             ]) : [],
         ],
 
-        'pgsql' => [
-            'driver' => 'pgsql',
-            'url' => (function () {
-                $url = env('DB_URL');
-                if ($url && str_contains($url, 'neon.tech') && ! str_contains($url, 'options=')) {
-                    $host = parse_url($url, PHP_URL_HOST) ?: env('DB_HOST', '');
-                    $endpoint = explode('.', $host)[0];
-                    if ($endpoint) {
-                        $separator = str_contains($url, '?') ? (str_ends_with($url, '?') || str_ends_with($url, '&') ? '' : '&') : '?';
-                        return "{$url}{$separator}options=endpoint%3D{$endpoint}";
-                    }
+        'pgsql' => (function () {
+            $dbUrl = env('DB_URL');
+            $parsedUrl = $dbUrl ? parse_url($dbUrl) : [];
+
+            $host = $parsedUrl['host'] ?? env('DB_HOST', '127.0.0.1');
+            $port = $parsedUrl['port'] ?? env('DB_PORT', '5432');
+            $database = isset($parsedUrl['path']) ? ltrim($parsedUrl['path'], '/') : env('DB_DATABASE', 'postgres');
+            $username = isset($parsedUrl['user']) ? rawurldecode($parsedUrl['user']) : env('DB_USERNAME', 'postgres');
+            $password = isset($parsedUrl['pass']) ? rawurldecode($parsedUrl['pass']) : env('DB_PASSWORD', '');
+
+            $sslmode = env('DB_SSLMODE', 'require');
+            if (isset($parsedUrl['query'])) {
+                parse_str($parsedUrl['query'], $query);
+                if (isset($query['sslmode'])) {
+                    $sslmode = $query['sslmode'];
                 }
-                return $url;
-            })(),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'postgres'),
-            'username' => env('DB_USERNAME', 'postgres'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => env('DB_CHARSET', 'utf8'),
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'search_path' => 'public',
-            'sslmode' => (function () {
-                $sslmode = env('DB_SSLMODE', 'require');
-                $host = env('DB_HOST', '');
-                if (str_contains($host, 'neon.tech') && ! str_contains($sslmode, 'options=')) {
-                    $endpoint = explode('.', $host)[0];
-                    if ($endpoint) {
-                        return "{$sslmode};options=endpoint={$endpoint}";
-                    }
+            }
+
+            if (str_contains($host, 'neon.tech') && ! str_contains($sslmode, 'options=')) {
+                $endpoint = explode('.', $host)[0];
+                if ($endpoint) {
+                    $sslmode = "{$sslmode};options=endpoint={$endpoint}";
                 }
-                return $sslmode;
-            })(),
-        ],
+            }
+
+            return [
+                'driver' => 'pgsql',
+                'url' => null,
+                'host' => $host,
+                'port' => $port,
+                'database' => $database,
+                'username' => $username,
+                'password' => $password,
+                'charset' => env('DB_CHARSET', 'utf8'),
+                'prefix' => '',
+                'prefix_indexes' => true,
+                'search_path' => 'public',
+                'sslmode' => $sslmode,
+            ];
+        })(),
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',
