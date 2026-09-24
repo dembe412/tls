@@ -27,6 +27,7 @@ $runtimeEnvironment = [
     'APP_EVENTS_CACHE' => $runtimeCache.'/events.php',
     'APP_COMPILED_VIEW_PATH' => $runtimeStorage.'/framework/views',
     'LOG_CHANNEL' => 'stderr',
+    'CACHE_STORE' => 'array',
 ];
 
 foreach ($runtimeEnvironment as $key => $value) {

@@ -23,11 +23,19 @@ class Media
             return;
         }
 
-        Storage::disk('public')->delete($path);
+        try {
+            Storage::disk('public')->delete($path);
+        } catch (\Throwable) {
+            // Ignore storage deletion errors
+        }
 
-        $upload = public_path('uploads/'.$path);
-        if (is_file($upload)) {
-            File::delete($upload);
+        try {
+            $upload = public_path('uploads/'.$path);
+            if (is_file($upload)) {
+                File::delete($upload);
+            }
+        } catch (\Throwable) {
+            // Read-only filesystem (e.g. Vercel)
         }
     }
 
@@ -46,20 +54,25 @@ class Media
 
     public static function mirror(string $path): void
     {
-        $disk = Storage::disk('public');
+        try {
+            $disk = Storage::disk('public');
 
-        if (! $disk->exists($path)) {
-            return;
+            if (! $disk->exists($path)) {
+                return;
+            }
+
+            $source = $disk->path($path);
+
+            if (! is_file($source)) {
+                return;
+            }
+
+            $target = public_path('uploads/'.$path);
+            File::ensureDirectoryExists(dirname($target));
+            File::copy($source, $target);
+        } catch (\Throwable) {
+            // In serverless environments like Vercel, public_path is read-only.
+            // Silently skip mirroring so the upload succeeds and MediaController serves it.
         }
-
-        $source = $disk->path($path);
-
-        if (! is_file($source)) {
-            return;
-        }
-
-        $target = public_path('uploads/'.$path);
-        File::ensureDirectoryExists(dirname($target));
-        File::copy($source, $target);
     }
 }
