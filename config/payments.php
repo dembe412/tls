@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'min_withdraw' => (int) env('MIN_WITHDRAW_UGX', 2000),
+
     'methods' => [
         'airtel' => [
             'key' => 'airtel',

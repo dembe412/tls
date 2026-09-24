@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Support\Media;
 use App\Support\NewsPublisher;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -56,9 +56,7 @@ class AdminProductController extends Controller
         $data['image_key'] = $data['image_key'] ?: $product->image_key ?: Str::slug($data['name']);
 
         if ($path = $this->storeImage($request)) {
-            if ($product->image_path) {
-                Storage::disk('public')->delete($product->image_path);
-            }
+            Media::delete($product->image_path);
             $data['image_path'] = $path;
         }
 
@@ -73,9 +71,7 @@ class AdminProductController extends Controller
             return back()->with('info', $product->name.' already has client purchases, so it cannot be deleted.');
         }
 
-        if ($product->image_path) {
-            Storage::disk('public')->delete($product->image_path);
-        }
+        Media::delete($product->image_path);
 
         $label = $product->name;
         $product->delete();
@@ -132,6 +128,6 @@ class AdminProductController extends Controller
             return null;
         }
 
-        return $request->file('image')->store('locks', 'public');
+        return Media::store($request->file('image'), 'locks');
     }
 }

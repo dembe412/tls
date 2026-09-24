@@ -36,5 +36,6 @@
         <env name="PAYMENT_AIRTEL_NAME" value="TSL Smart Locks"/>
         <env name="PAYMENT_MTN_NUMBER" value="0770000000"/>
         <env name="PAYMENT_MTN_NAME" value="TSL Smart Locks"/>
+        <env name="MIN_WITHDRAW_UGX" value="2000"/>
     </php>
 </phpunit>

@@ -8,6 +8,7 @@
     <h1><span>TSL</span> control</h1>
     <div class="head-actions">
         <a class="text-link" href="{{ route('account') }}">My locks</a>
+        <a class="text-link" href="{{ route('security.devices') }}">Devices</a>
     </div>
     <div class="stat-row three">
         <div class="stat card"><b>{{ $clients->count() }}</b><span>Clients</span></div>
@@ -36,6 +37,10 @@
                 </label>
             </fieldset>
         @endforeach
+        <label>
+            <span>WhatsApp customer support</span>
+            <input class="field-pill" name="whatsapp" value="{{ old('whatsapp', $whatsapp) }}" placeholder="2567XXXXXXXX" maxlength="30">
+        </label>
         <button class="btn btn-primary" type="submit">Save payment details</button>
     </form>
 </section>
@@ -73,27 +78,74 @@
 
 <section class="catalog">
     <h2>Bonus codes</h2>
-    @forelse ($pendingBonuses as $redemption)
+    <p class="muted">Create a code, then send the link to the member. It expires after {{ $bonusMinutes }} minutes if nobody claims it.</p>
+    <form method="POST" action="{{ route('admin.bonuses.store') }}" class="add-lock">
+        @csrf
+        <label>Amount (UGX)
+            <input class="field-pill" type="number" name="amount" min="1" placeholder="10000" required>
+        </label>
+        <label>Send to
+            <select name="assigned_user_id">
+                <option value="">Anyone with the link</option>
+                @foreach ($clients as $client)
+                    <option value="{{ $client->id }}">{{ $client->profileName() }}@if ($client->phone) · {{ $client->phone }}@endif</option>
+                @endforeach
+            </select>
+        </label>
+        <label>Note
+            <input class="field-pill" name="note" maxlength="120" placeholder="Weekend reward">
+        </label>
+        <button class="btn btn-tiny" type="submit">Create bonus code</button>
+    </form>
+
+    @forelse ($bonusCodes as $bonus)
         <div class="manage-row card-row">
             <div>
-                <strong>{{ $redemption->code }}</strong>
-                <p>{{ $redemption->user?->profileName() }}@if ($redemption->user?->phone) · {{ $redemption->user->phone }}@endif</p>
+                <strong>{{ $bonus->code }} · {{ $bonus->amountLabel() }}</strong>
+                <p>
+                    {{ $bonus->assignedTo?->profileName() ?? 'Anyone with the link' }}
+                    @if ($bonus->isClaimed())
+                        · claimed by {{ $bonus->claimedBy?->profileName() }} {{ $bonus->claimed_at->diffForHumans() }}
+                    @elseif ($bonus->hasExpired())
+                        · expired {{ $bonus->expires_at->diffForHumans() }}
+                    @else
+                        · expires {{ $bonus->expires_at->diffForHumans() }}
+                    @endif
+                </p>
+                @if ($bonus->isOpen())
+                    <input class="field-pill" readonly value="{{ $bonus->shareUrl() }}">
+                @endif
+            </div>
+            <span class="pill">{{ $bonus->statusLabel() }}</span>
+        </div>
+    @empty
+        <p class="muted">No bonus codes yet.</p>
+    @endforelse
+</section>
+
+<section class="catalog">
+    <h2>Waiting for device approval</h2>
+    @forelse ($pendingApprovals as $challenge)
+        <div class="manage-row card-row">
+            <div>
+                <strong>
+                    @if ($challenge->type === 'withdrawal')
+                        {{ $challenge->context['amount_label'] ?? 'Withdrawal' }}
+                    @else
+                        Login request
+                    @endif
+                </strong>
+                <p>
+                    {{ $challenge->context['reference'] ?? $challenge->context['member'] ?? $challenge->user?->profileName() }}
+                    · expires {{ $challenge->expires_at->diffForHumans() }}
+                </p>
             </div>
             <div class="row-actions">
-                <form method="POST" action="{{ route('admin.bonuses.settle', $redemption) }}">
-                    @csrf
-                    <input type="hidden" name="status" value="applied">
-                    <button class="btn btn-small" type="submit">Apply</button>
-                </form>
-                <form method="POST" action="{{ route('admin.bonuses.settle', $redemption) }}">
-                    @csrf
-                    <input type="hidden" name="status" value="rejected">
-                    <button class="btn btn-ghost" type="submit">Reject</button>
-                </form>
+                <a class="btn btn-small" href="{{ route('security.review', $challenge) }}">Review</a>
             </div>
         </div>
     @empty
-        <p class="muted">No bonus codes waiting.</p>
+        <p class="muted">Nothing waiting for approval.</p>
     @endforelse
 </section>
 
@@ -103,14 +155,21 @@
         <div class="manage-row card-row">
             <div>
                 <strong>{{ \App\Support\Money::ugx($withdrawal->amount) }}</strong>
-                <p>{{ $withdrawal->user?->phone }} · {{ $withdrawal->requested_at->toFormattedDateString() }}</p>
+                <p>
+                    {{ $withdrawal->reference }}
+                    · {{ $withdrawal->status }}
+                    · {{ $withdrawal->user?->phone }}
+                    · {{ $withdrawal->requested_at->toFormattedDateString() }}
+                </p>
             </div>
             <div class="row-actions">
+                @if (in_array($withdrawal->status, ['authorized', 'pending'], true))
                 <form method="POST" action="{{ route('admin.settle', $withdrawal) }}">
                     @csrf
                     <input type="hidden" name="status" value="paid">
                     <button class="btn btn-small" type="submit">Paid</button>
                 </form>
+                @endif
                 <form method="POST" action="{{ route('admin.settle', $withdrawal) }}">
                     @csrf
                     <input type="hidden" name="status" value="rejected">
@@ -220,6 +279,23 @@
                 <span>{{ $client->phone ? $client->phone.' · ' : '' }}{{ $own->where('status', 'active')->count() }} active · {{ \App\Support\Money::ugx($earned) }} earned</span>
             </summary>
             <div class="client-body">
+                <p class="muted">
+                    Account balance {{ \App\Support\Money::ugx($client->accountBalance()) }}
+                    · Recharge balance {{ \App\Support\Money::ugx($client->rechargeBalance()) }}
+                </p>
+                <form method="POST" action="{{ route('admin.credit', $client) }}" class="add-lock">
+                    @csrf
+                    <label>Add money to a balance
+                        <select name="wallet">
+                            <option value="recharge">Recharge balance</option>
+                            <option value="account">Account balance</option>
+                        </select>
+                    </label>
+                    <label>Amount (UGX)
+                        <input class="field-pill" type="number" name="amount" min="1" placeholder="50000" required>
+                    </label>
+                    <button class="btn btn-tiny" type="submit">Add money</button>
+                </form>
                 @foreach ($own as $purchase)
                     <div class="mini-lock">
                         <p>

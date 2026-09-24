@@ -204,3 +204,110 @@
         setInterval(load, seconds * 1000);
     }, delayUntilNextTick());
 })();
+
+(() => {
+    const box = document.getElementById('challenge-wait');
+    if (!box) {
+        return;
+    }
+
+    const poll = async () => {
+        try {
+            const response = await fetch(box.dataset.statusUrl, { headers: { Accept: 'application/json' } });
+            if (!response.ok) {
+                return;
+            }
+            const data = await response.json();
+            if (data.status === 'approved' && data.redirect) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = data.redirect;
+                const token = document.querySelector('meta[name="csrf-token"]')?.content;
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = '_token';
+                input.value = token;
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        } catch {
+            // Keep waiting.
+        }
+    };
+
+    setInterval(poll, 2500);
+})();
+
+(() => {
+    const form = document.getElementById('pay-form');
+    const sources = form?.querySelectorAll('input[name="payment_source"]');
+    if (!form || !sources?.length) {
+        return;
+    }
+
+    const blocks = form.querySelectorAll('[data-pay-mobile]');
+    const submit = form.querySelector('button[type="submit"]');
+
+    const paint = () => {
+        const chosen = form.querySelector('input[name="payment_source"]:checked')?.value || 'mobile_money';
+        const byMobileMoney = chosen === 'mobile_money';
+
+        blocks.forEach((block) => {
+            block.hidden = !byMobileMoney;
+            block.querySelectorAll('input').forEach((input) => {
+                input.disabled = !byMobileMoney;
+            });
+        });
+
+        if (submit) {
+            submit.textContent = byMobileMoney ? 'Submit deposit' : 'Pay from balance';
+        }
+    };
+
+    sources.forEach((input) => input.addEventListener('change', paint));
+    paint();
+})();
+
+(() => {
+    const widget = document.querySelector('[data-human-check]');
+    if (!widget) {
+        return;
+    }
+
+    const tick = widget.querySelector('[data-human-tick]');
+    const token = widget.querySelector('input[name="human_token"]');
+    const status = widget.querySelector('[data-human-status]');
+    const seed = widget.dataset.humanSeed || '';
+
+    tick?.addEventListener('change', () => {
+        if (tick.checked) {
+            token.value = seed.split('').reverse().join('');
+            widget.classList.add('is-verified');
+            if (status) status.textContent = 'Thank you — you are confirmed as a person.';
+            return;
+        }
+
+        token.value = '';
+        widget.classList.remove('is-verified');
+        if (status) status.textContent = 'Tick the box so TSL knows a person is signing up.';
+    });
+})();
+
+(() => {
+    const button = document.querySelector('[data-copy-invite]');
+    const input = document.getElementById('invite-link');
+    if (!button || !input) {
+        return;
+    }
+
+    button.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(input.value);
+            button.textContent = 'Copied';
+            setTimeout(() => { button.textContent = 'Copy invite link'; }, 1600);
+        } catch {
+            input.select();
+        }
+    });
+})();

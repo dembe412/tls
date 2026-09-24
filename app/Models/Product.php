@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Media;
 use App\Support\Money;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -107,7 +108,7 @@ class Product extends Model
     public function imageUrl(): string
     {
         if ($this->image_path) {
-            return asset('storage/'.$this->image_path);
+            return Media::url($this->image_path) ?? asset('images/locks/ts20.svg');
         }
 
         $fallback = public_path('images/locks/'.$this->image_key.'.svg');

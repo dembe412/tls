@@ -20,4 +20,8 @@ Open http://localhost:8000
 
 The first account created becomes the manager. Later accounts are clients.
 
-Phone + password login. After a client requests a lock, the manager marks it as bought so the daily interest / 35-day cycle starts. The manager enters the daily interest amount for each lock.
+Members sign up with a username and/or phone plus a password. There is no SMS code — signup is protected by an on-page “I am not a robot” check.
+
+Managers sign in with password, then approve the login from a registered browser. Withdrawals also need that device approval. Requests waiting for a decision are listed in the manager console under **Waiting for device approval**. “Keep me signed in” never skips withdrawal authorization.
+
+Profile photos and product pictures are stored on disk (`storage/app/public` and `public/uploads`). The database keeps the image path/link (`avatar_path`, `image_path`). Minimum withdraw is 2,000 UGX.

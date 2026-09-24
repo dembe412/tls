@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\NewsArticle;
+use App\Support\Media;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AdminNewsController extends Controller
@@ -42,7 +42,7 @@ class AdminNewsController extends Controller
 
         if ($path = $this->storeImage($request)) {
             if ($article->image_path && $article->image_path !== $article->product?->image_path) {
-                Storage::disk('public')->delete($article->image_path);
+                Media::delete($article->image_path);
             }
             $data['image_path'] = $path;
         }
@@ -59,7 +59,7 @@ class AdminNewsController extends Controller
     public function destroy(NewsArticle $article)
     {
         if ($article->image_path && $article->image_path !== $article->product?->image_path) {
-            Storage::disk('public')->delete($article->image_path);
+            Media::delete($article->image_path);
         }
 
         $article->delete();
@@ -106,6 +106,6 @@ class AdminNewsController extends Controller
             return null;
         }
 
-        return $request->file('image')->store('news', 'public');
+        return Media::store($request->file('image'), 'news');
     }
 }

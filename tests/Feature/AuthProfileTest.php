@@ -18,13 +18,15 @@ class AuthProfileTest extends TestCase
 
         $this->post(route('register'), [
             'name' => 'Aisha Nalwoga',
+            'phone' => '0781495461',
             'password' => 'secret1',
             'password_confirmation' => 'secret1',
+            ...$this->humanCheckFields(),
         ])->assertRedirect(route('account'));
 
         $this->assertDatabaseHas('users', [
             'name' => 'Aisha Nalwoga',
-            'phone' => null,
+            'phone' => '0781495461',
         ]);
 
         $this->post(route('logout'));
@@ -43,6 +45,7 @@ class AuthProfileTest extends TestCase
             'phone' => '0781 495 461',
             'password' => 'secret1',
             'password_confirmation' => 'secret1',
+            ...$this->humanCheckFields(),
         ])->assertRedirect();
 
         $this->assertDatabaseHas('users', [

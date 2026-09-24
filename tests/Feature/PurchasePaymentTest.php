@@ -66,6 +66,7 @@ class PurchasePaymentTest extends TestCase
 
         $this->actingAs($user)
             ->post(route('locks.request', $product), [
+                'payment_source' => 'mobile_money',
                 'payment_method' => 'airtel',
                 'transaction_id' => 'UPDATED4455',
                 'confirmed' => '1',
@@ -82,6 +83,7 @@ class PurchasePaymentTest extends TestCase
 
         $this->actingAs($user)
             ->post(route('locks.request', $product), [
+                'payment_source' => 'mobile_money',
                 'payment_method' => 'airtel',
                 'transaction_id' => 'mm 123abc',
                 'confirmed' => '1',
@@ -109,6 +111,7 @@ class PurchasePaymentTest extends TestCase
 
         $this->actingAs($first)
             ->post(route('locks.request', $product), [
+                'payment_source' => 'mobile_money',
                 'payment_method' => 'mtn',
                 'transaction_id' => 'TX9001',
                 'confirmed' => '1',
@@ -120,6 +123,7 @@ class PurchasePaymentTest extends TestCase
         $this->actingAs($second)
             ->from(route('locks.pay', $other))
             ->post(route('locks.request', $other), [
+                'payment_source' => 'mobile_money',
                 'payment_method' => 'mtn',
                 'transaction_id' => 'TX9001',
                 'confirmed' => '1',
@@ -136,6 +140,7 @@ class PurchasePaymentTest extends TestCase
 
         $this->actingAs($client)
             ->post(route('locks.request', $product), [
+                'payment_source' => 'mobile_money',
                 'payment_method' => 'airtel',
                 'transaction_id' => 'AIR4455',
                 'confirmed' => '1',
@@ -171,6 +176,7 @@ class PurchasePaymentTest extends TestCase
 
         $this->actingAs($user)
             ->post(route('locks.request', $vip), [
+                'payment_source' => 'mobile_money',
                 'payment_method' => 'mtn',
                 'transaction_id' => 'VIP8800',
                 'confirmed' => '1',

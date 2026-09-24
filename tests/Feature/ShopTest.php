@@ -32,6 +32,7 @@ class ShopTest extends TestCase
             ->assertSee('Products')
             ->assertSee('News')
             ->assertSee('My account')
+            ->assertSee('Team')
             ->assertSee('FAQ')
             ->assertSee('Redeem bonus')
             ->assertSee('Our Community')
@@ -52,16 +53,20 @@ class ShopTest extends TestCase
             ->assertSee('Monthly salary is paid on the 1st of each month');
     }
 
-    public function test_member_account_lists_vip_products_to_buy(): void
+    public function test_member_account_shows_money_totals_and_withdraw_rules(): void
     {
         $user = User::factory()->create();
 
         $this->actingAs($user)
             ->get(route('account'))
             ->assertOk()
-            ->assertSee('VIP1')
-            ->assertSee('Marketing benefits')
-            ->assertSee(route('locks.pay', Product::query()->where('name', 'VIP1')->first()));
+            ->assertSee('Total recharge')
+            ->assertSee('Total withdraws')
+            ->assertSee('Earned daily')
+            ->assertSee('Withdraw')
+            ->assertSee('Minimum withdraw is 2,000 UGX according to the local Ugandan instructions that govern the financial regulations')
+            ->assertDontSee('Other locks available')
+            ->assertDontSee('Marketing benefits');
     }
 
     public function test_guest_can_open_register_for_a_lock(): void

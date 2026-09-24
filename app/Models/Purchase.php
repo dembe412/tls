@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Support\Money;
 use App\Support\PaymentMethods;
+use App\Support\Wallet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -118,6 +119,15 @@ class Purchase extends Model
 
     public function paymentMethodLabel(): string
     {
+        if ($wallet = Wallet::fromPaymentMethod($this->payment_method)) {
+            return Wallet::label($wallet);
+        }
+
         return PaymentMethods::find((string) $this->payment_method)['name'] ?? 'Mobile money';
+    }
+
+    public function paidFromBalance(): bool
+    {
+        return Wallet::fromPaymentMethod($this->payment_method) !== null;
     }
 }

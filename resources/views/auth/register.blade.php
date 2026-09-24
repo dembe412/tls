@@ -23,11 +23,17 @@
             </div>
         @endif
         <h2>Create account</h2>
-        <p class="auth-lead">Use a username, a phone number, or both. Either one will sign you in later.</p>
+        <p class="auth-lead">Use a username, a phone number, or both. No SMS code is sent — just confirm you are not a robot below.</p>
         <form method="POST" action="{{ route('register') }}" class="auth-form">
             @csrf
             @if ($product)
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
+            @endif
+            @if ($referrer)
+                <input type="hidden" name="ref" value="{{ $referrer->referral_code }}">
+                <p class="invite-chip">Invited by {{ $referrer->profileName() }}</p>
+            @elseif (old('ref'))
+                <input type="hidden" name="ref" value="{{ old('ref') }}">
             @endif
             <label>
                 <span>Username</span>
@@ -45,6 +51,7 @@
                 <span>Confirm password</span>
                 <input class="field-pill" type="password" name="password_confirmation" required minlength="6" placeholder="Repeat password">
             </label>
+            @include('partials.human-check')
             <button class="btn btn-primary" type="submit">Create account</button>
         </form>
         <p class="fine">Already have an account? <a href="{{ route('login') }}">Sign in</a></p>

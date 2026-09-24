@@ -4,8 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Support\Money;
 use App\Support\PaymentMethods;
+use App\Support\Referrals;
+use App\Support\Security\Audit;
+use App\Support\Security\ChallengeVault;
+use App\Support\Wallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class PurchaseController extends Controller
@@ -25,6 +31,8 @@ class PurchaseController extends Controller
             'product' => $product,
             'methods' => PaymentMethods::all(),
             'user' => $user,
+            'accountBalance' => $user->accountBalance(),
+            'rechargeBalance' => $user->rechargeBalance(),
         ]);
     }
 
@@ -44,26 +52,31 @@ class PurchaseController extends Controller
         ]);
 
         $data = $request->validate([
-            'payment_method' => ['required', 'string', Rule::in(PaymentMethods::keys())],
+            'payment_source' => ['required', 'string', Rule::in([...Wallet::wallets(), 'mobile_money'])],
+            'payment_method' => ['required_if:payment_source,mobile_money', 'nullable', 'string', Rule::in(PaymentMethods::keys())],
             'transaction_id' => [
-                'required',
+                'required_if:payment_source,mobile_money',
+                'nullable',
                 'string',
                 'min:4',
                 'max:64',
                 Rule::unique('purchases', 'transaction_id'),
             ],
-            'confirmed' => ['accepted'],
+            'confirmed' => ['accepted_if:payment_source,mobile_money'],
         ]);
 
+        if ($data['payment_source'] !== 'mobile_money') {
+            return $this->payFromBalance($request, $product, $data['payment_source']);
+        }
+
         $method = PaymentMethods::find($data['payment_method']);
-        $transactionId = $data['transaction_id'];
 
         $user->purchases()->create([
             'product_id' => $product->id,
             'status' => 'pending',
             'payment_method' => $method['key'],
             'payment_number' => $method['number'],
-            'transaction_id' => $transactionId,
+            'transaction_id' => $data['transaction_id'],
             'payer_name' => $user->profileName(),
             'principal' => $product->cost_price,
             'daily_income' => $product->purchaseDailyIncome(),
@@ -76,23 +89,104 @@ class PurchaseController extends Controller
         );
     }
 
+    /**
+     * Money already inside TSL, so the lock starts earning straight away.
+     */
+    private function payFromBalance(Request $request, Product $product, string $wallet)
+    {
+        $user = $request->user();
+        $price = (int) $product->cost_price;
+
+        if (! $user->canPayFrom($wallet, $price)) {
+            return back()
+                ->withInput()
+                ->with('info', 'Your '.strtolower(Wallet::label($wallet)).' is below '.Money::ugx($price).'. Top up or pay by mobile money.');
+        }
+
+        $duration = $product->purchaseDurationDays();
+        $reference = 'BAL'.strtoupper(Str::random(8));
+
+        $purchase = $user->purchases()->create([
+            'product_id' => $product->id,
+            'status' => 'active',
+            'payment_method' => Wallet::paymentMethodFor($wallet),
+            'transaction_id' => $reference,
+            'payer_name' => $user->profileName(),
+            'principal' => $price,
+            'daily_income' => $product->purchaseDailyIncome(),
+            'duration_days' => $duration,
+            'activated_at' => now(),
+            'matures_at' => now()->addDays($duration),
+        ]);
+
+        Wallet::debit(
+            $user,
+            $wallet,
+            $price,
+            'purchase',
+            $product->name,
+            $reference,
+            $purchase,
+        );
+
+        Referrals::payFor($purchase->fresh(['user', 'product']));
+
+        Audit::record('purchase_paid_from_balance', $request, $user, null, [
+            'purchase_id' => $purchase->id,
+            'wallet' => $wallet,
+            'amount' => $price,
+            'reference' => $reference,
+        ]);
+
+        return redirect()->route('account')->with(
+            'success',
+            $product->name.' was paid from your '.strtolower(Wallet::label($wallet)).'. Reference '.$reference.'.'
+        );
+    }
+
     public function cashOut(Request $request, Purchase $purchase)
     {
         abort_unless($purchase->user_id === $request->user()->id, 403);
 
         $amount = $purchase->availableToCashOut();
+        $minimum = (int) config('payments.min_withdraw', 2000);
 
         if (! $purchase->isMatured() || $amount <= 0) {
             return back()->with('info', 'This lock is not ready to cash out yet.');
         }
 
-        $purchase->withdrawals()->create([
+        if ($amount < $minimum) {
+            return back()->with(
+                'info',
+                'Minimum withdraw is '.Money::ugx($minimum).' according to the local Ugandan instructions that govern the financial regulations.'
+            );
+        }
+
+        $withdrawal = $purchase->withdrawals()->create([
             'user_id' => $request->user()->id,
             'amount' => $amount,
-            'status' => 'pending',
+            'status' => 'awaiting_approval',
+            'reference' => 'WD'.strtoupper(Str::random(8)),
             'requested_at' => now(),
+            'expires_at' => now()->addSeconds((int) config('security.challenge_ttl', 120)),
         ]);
 
-        return back()->with('success', 'Cash out requested. A manager will settle it.');
+        $challenge = app(ChallengeVault::class)->issue('withdrawal', $request, null, $withdrawal, [
+            'amount_label' => Money::ugx($amount),
+            'reference' => $withdrawal->reference,
+            'member' => $request->user()->profileName(),
+        ]);
+
+        Audit::record('withdrawal_requested', $request, $request->user(), null, [
+            'withdrawal_id' => $withdrawal->id,
+            'reference' => $withdrawal->reference,
+            'amount' => $amount,
+            'challenge' => $challenge->public_id,
+        ]);
+
+        return back()->with(
+            'success',
+            'Cash out requested. A manager must approve '.$withdrawal->reference.' from a registered device. Minimum withdraw is '.Money::ugx($minimum).'.'
+        );
     }
 }

@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-
 class HelpController extends Controller
 {
     public function faq()
@@ -12,48 +9,6 @@ class HelpController extends Controller
         return view('help.faq', [
             'questions' => $this->questions(),
         ]);
-    }
-
-    public function bonus(Request $request)
-    {
-        $user = $request->user();
-
-        return view('help.bonus', [
-            'redemptions' => $user
-                ? $user->bonusRedemptions()->latest()->get()
-                : collect(),
-        ]);
-    }
-
-    public function redeem(Request $request)
-    {
-        $user = $request->user();
-        abort_unless($user, 403);
-
-        $request->merge([
-            'code' => strtoupper((string) preg_replace('/\s+/', '', (string) $request->input('code'))),
-        ]);
-
-        $data = $request->validate([
-            'code' => [
-                'required',
-                'string',
-                'min:4',
-                'max:24',
-                'regex:/^[A-Z0-9-]+$/',
-                Rule::unique('bonus_redemptions', 'code')->where('user_id', $user->id),
-            ],
-        ], [
-            'code.unique' => 'You already sent this bonus code.',
-            'code.regex' => 'Use letters, numbers or dashes only.',
-        ]);
-
-        $user->bonusRedemptions()->create([
-            'code' => $data['code'],
-            'status' => 'pending',
-        ]);
-
-        return back()->with('success', 'Bonus code sent. TSL will apply it after a check.');
     }
 
     /**
@@ -72,7 +27,15 @@ class HelpController extends Controller
             ],
             [
                 'q' => 'What are VIP levels?',
-                'a' => 'VIP products sit on Products and My account. They follow a monthly salary paid on the 1st, with a recharge and ABC member requirement on each gold card.',
+                'a' => 'Registered members with no top-up are Ordinary. After any recharge you become VIP 0. VIP 1 to VIP 5 unlock on Team when your cumulative recharge, ABC team size and a purchased product meet that gold card.',
+            ],
+            [
+                'q' => 'How do I withdraw?',
+                'a' => 'Open My account, go to Withdraw, then cash out a matured lock. Minimum withdraw is 2,000 UGX according to the local Ugandan instructions that govern the financial regulations. A manager must then approve the cash-out from a registered browser.',
+            ],
+            [
+                'q' => 'How do managers sign in?',
+                'a' => 'Managers enter username/phone and password, then approve the login from a registered browser. There is no SMS code. Requests waiting for a decision are listed in the manager console. Withdrawals always need a fresh device approval, even if you kept this device signed in.',
             ],
             [
                 'q' => 'How do I pay?',
@@ -84,7 +47,11 @@ class HelpController extends Controller
             ],
             [
                 'q' => 'How do I redeem a bonus?',
-                'a' => 'Tap Redeem bonus on Home, sign in, and enter the code TSL gave you. The manager checks it and applies it to your account.',
+                'a' => 'A manager sends you a bonus link or code. Open it, sign in, and tap Claim. The money lands in your account balance straight away. A bonus code expires a few minutes after it is made, so claim it quickly.',
+            ],
+            [
+                'q' => 'How much do I earn for inviting friends?',
+                'a' => 'Share your invite link from Team or My account. When someone you invited buys a lock you earn 5% of the price, and 10% when they buy a VIP. Level B earns 2% and Level C earns 1%. The commission goes into your account balance the moment their product is switched on.',
             ],
         ];
     }

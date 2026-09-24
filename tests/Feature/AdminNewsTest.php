@@ -62,7 +62,7 @@ class AdminNewsTest extends TestCase
             ->assertOk()
             ->assertSee('Dembe Kato')
             ->assertSee('Manager')
-            ->assertSee('storage/avatars/boss.jpg')
+            ->assertSee('media/avatars/boss.jpg')
             ->assertSee('TS-50 is in stock');
     }
 }

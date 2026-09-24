@@ -43,7 +43,9 @@ class AdminProductTest extends TestCase
         $this->assertSame('TS-60', $product->name);
         $this->assertNotNull($product->image_path);
         Storage::disk('public')->assertExists($product->image_path);
-        $this->assertStringContainsString('/storage/', $product->imageUrl());
+        $this->assertTrue(
+            str_contains($product->imageUrl(), '/media/') || str_contains($product->imageUrl(), '/uploads/')
+        );
         $this->assertTrue(
             NewsArticle::query()->where('product_id', $product->id)->where('user_id', $admin->id)->exists()
         );

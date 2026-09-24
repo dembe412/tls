@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Media;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -37,7 +38,7 @@ class NewsArticle extends Model
     public function imageUrl(): ?string
     {
         if ($this->image_path) {
-            return asset('storage/'.$this->image_path);
+            return Media::url($this->image_path);
         }
 
         return $this->product?->imageUrl();
