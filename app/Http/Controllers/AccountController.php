@@ -124,7 +124,15 @@ class AccountController extends Controller
         ]);
 
         $user->name = $data['name'];
-        $user->phone = $data['phone'] ?? null;
+        if (! empty($data['phone'])) {
+            $user->phone = $data['phone'];
+            $user->email = User::phoneToEmail($data['phone']);
+        } else {
+            $user->phone = null;
+            if (empty($user->email)) {
+                $user->email = User::emailFromName($data['name']);
+            }
+        }
         $oldAvatar = null;
 
         if ($request->hasFile('avatar')) {

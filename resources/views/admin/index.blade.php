@@ -163,7 +163,7 @@
                 </p>
             </div>
             <div class="row-actions">
-                @if (in_array($withdrawal->status, ['authorized', 'pending'], true))
+                @if (in_array($withdrawal->status, ['authorized', 'pending', 'awaiting_approval'], true))
                 <form method="POST" action="{{ route('admin.settle', $withdrawal) }}">
                     @csrf
                     <input type="hidden" name="status" value="paid">

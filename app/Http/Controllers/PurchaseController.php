@@ -165,28 +165,21 @@ class PurchaseController extends Controller
         $withdrawal = $purchase->withdrawals()->create([
             'user_id' => $request->user()->id,
             'amount' => $amount,
-            'status' => 'awaiting_approval',
+            'status' => 'pending',
             'reference' => 'WD'.strtoupper(Str::random(8)),
             'requested_at' => now(),
-            'expires_at' => now()->addSeconds((int) config('security.challenge_ttl', 120)),
-        ]);
-
-        $challenge = app(ChallengeVault::class)->issue('withdrawal', $request, null, $withdrawal, [
-            'amount_label' => Money::ugx($amount),
-            'reference' => $withdrawal->reference,
-            'member' => $request->user()->profileName(),
+            'expires_at' => null,
         ]);
 
         Audit::record('withdrawal_requested', $request, $request->user(), null, [
             'withdrawal_id' => $withdrawal->id,
             'reference' => $withdrawal->reference,
             'amount' => $amount,
-            'challenge' => $challenge->public_id,
         ]);
 
         return back()->with(
             'success',
-            'Cash out requested. A manager must approve '.$withdrawal->reference.' from a registered device. Minimum withdraw is '.Money::ugx($minimum).'.'
+            'Cash out requested. A manager will process '.$withdrawal->reference.'. Minimum withdraw is '.Money::ugx($minimum).'.'
         );
     }
 }

@@ -148,16 +148,21 @@ class AdminController extends Controller
             'status' => ['required', 'in:paid,rejected'],
         ]);
 
-        if ($data['status'] === 'paid' && ! in_array($withdrawal->status, ['authorized', 'pending'], true)) {
+        if ($data['status'] === 'paid' && ! in_array($withdrawal->status, ['authorized', 'pending', 'awaiting_approval'], true)) {
             return back()->with(
                 'info',
-                'This withdrawal still needs device approval before it can be marked paid.'
+                'This withdrawal is not eligible to be marked paid.'
             );
         }
 
         $withdrawal->update([
             'status' => $data['status'],
             'paid_at' => $data['status'] === 'paid' ? now() : null,
+        ]);
+
+        $withdrawal->challenges()->where('status', 'pending')->update([
+            'status' => $data['status'] === 'paid' ? 'approved' : 'rejected',
+            'resolved_at' => now(),
         ]);
 
         Audit::record(

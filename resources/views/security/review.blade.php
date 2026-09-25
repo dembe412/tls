@@ -27,7 +27,7 @@
             <p class="pay-amount">{{ $amount }}</p>
             <p class="hint">Reference {{ $reference }}</p>
         @endif
-        <p class="auth-lead">Status: <strong>{{ $challenge->status }}</strong> · device {{ $device->name }}</p>
+        <p class="auth-lead">Status: <strong>{{ $challenge->status }}</strong>@if($device) · device {{ $device->name }}@elseif(auth()->user()?->isAdmin()) · Manager session @endif</p>
         @if ($challenge->isPending())
             <form method="POST" action="{{ route('security.challenge.decide', $challenge) }}" class="money-actions">
                 @csrf

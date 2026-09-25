@@ -71,11 +71,12 @@ class ChallengeController extends Controller
     public function review(Request $request, AuthChallenge $challenge)
     {
         $device = $this->devices->current($request);
-        abort_unless($device, 403, 'This browser is not a registered approval device.');
+        $user = $request->user();
+        abort_unless($device || ($user && $user->isAdmin()), 403, 'This browser is not a registered approval device.');
 
         $challenge->expireIfNeeded();
         $challenge->refresh();
-        $this->assertDeviceMaySee($challenge, $device);
+        $this->assertDeviceMaySee($challenge, $device, $user);
 
         return view('security.review', [
             'challenge' => $challenge,
@@ -90,7 +91,8 @@ class ChallengeController extends Controller
         $this->throttle($request, 'challenge-decide:'.$request->ip());
 
         $device = $this->devices->current($request);
-        abort_unless($device, 403, 'This browser is not a registered approval device.');
+        $user = $request->user();
+        abort_unless($device || ($user && $user->isAdmin()), 403, 'This browser is not a registered approval device.');
 
         $data = $request->validate([
             'decision' => ['required', 'in:approved,rejected'],
@@ -105,12 +107,14 @@ class ChallengeController extends Controller
             ]);
         }
 
-        $this->assertDeviceMaySee($challenge, $device);
-        $this->devices->touch($device);
+        $this->assertDeviceMaySee($challenge, $device, $user);
+        if ($device) {
+            $this->devices->touch($device);
+        }
 
         $challenge->update([
             'status' => $data['decision'],
-            'approved_device_id' => $device->id,
+            'approved_device_id' => $device?->id,
             'resolved_at' => now(),
         ]);
 
@@ -130,7 +134,7 @@ class ChallengeController extends Controller
         Audit::record(
             $challenge->type.'_'.$data['decision'],
             $request,
-            $challenge->user ?: $device->user,
+            $challenge->user ?: $device?->user ?: $user,
             $device,
             [
                 'challenge' => $challenge->public_id,
@@ -157,8 +161,16 @@ class ChallengeController extends Controller
         return redirect()->route('security.review', $challenge)->with('success', $message);
     }
 
-    private function assertDeviceMaySee(AuthChallenge $challenge, $device): void
+    private function assertDeviceMaySee(AuthChallenge $challenge, $device, $user = null): void
     {
+        if ($user?->isAdmin()) {
+            return;
+        }
+
+        if (! $device) {
+            abort(403, 'This browser is not a registered approval device.');
+        }
+
         if ($challenge->type === 'login') {
             abort_unless((int) $device->user_id === (int) $challenge->user_id, 403);
         } else {
