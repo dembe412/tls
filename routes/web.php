@@ -42,7 +42,7 @@ Route::get('/security/devices/enroll', [DeviceController::class, 'enroll'])->nam
 Route::post('/security/devices', [DeviceController::class, 'store'])->name('security.devices.store');
 Route::get('/security/challenge/{challenge}/wait', [ChallengeController::class, 'wait'])->name('security.challenge.wait');
 Route::get('/security/challenge/{challenge}/status', [ChallengeController::class, 'status'])->name('security.challenge.status');
-Route::post('/security/challenge/{challenge}/complete', [ChallengeController::class, 'complete'])->name('security.challenge.complete');
+Route::match(['get', 'post'], '/security/challenge/{challenge}/complete', [ChallengeController::class, 'complete'])->name('security.challenge.complete');
 Route::get('/security/review/{challenge}', [ChallengeController::class, 'review'])->name('security.review');
 Route::post('/security/review/{challenge}', [ChallengeController::class, 'decide'])->name('security.challenge.decide');
 

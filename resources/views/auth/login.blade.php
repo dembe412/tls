@@ -10,7 +10,7 @@
 
 <section class="auth-wrap">
     <div class="auth-card">
-        <p class="auth-lead">Use your username or phone number, plus your password. Managers then approve the login from a registered browser — not SMS.</p>
+        <p class="auth-lead">Sign in with your username or phone number and password.</p>
         <form method="POST" action="{{ route('login') }}" class="auth-form">
             @csrf
             <label>
@@ -25,7 +25,6 @@
                 <input type="checkbox" name="keep_signed_in" value="1" @checked(old('keep_signed_in'))>
                 <span>Keep me signed in on this device</span>
             </label>
-            <p class="hint">Saved sign-ins can be revoked. Withdrawals always need a fresh device approval.</p>
             <button class="btn btn-primary" type="submit">Sign in</button>
         </form>
         <p class="fine">New here? <a href="{{ route('register') }}">Create an account</a></p>

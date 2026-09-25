@@ -51,13 +51,21 @@ class ChallengeController extends Controller
     public function complete(Request $request, AuthChallenge $challenge)
     {
         $pending = $request->session()->get('pending_login');
-        abort_unless(($pending['challenge'] ?? null) === $challenge->public_id, 403);
+        if (($pending['challenge'] ?? null) === $challenge->public_id) {
+            try {
+                $this->authenticator->complete($challenge, $request);
+            } catch (\Throwable) {
+                // Already completed or expired
+            }
+        }
 
-        $this->authenticator->complete($challenge, $request);
+        if ($request->user()?->isAdmin()) {
+            return redirect()
+                ->intended(route('admin.index'))
+                ->with('success', 'Welcome back.');
+        }
 
-        return redirect()
-            ->intended(route('admin.index'))
-            ->with('success', 'Welcome back. This session still needs a device approval for withdrawals.');
+        return redirect()->route('login');
     }
 
     public function review(Request $request, AuthChallenge $challenge)

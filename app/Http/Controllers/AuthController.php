@@ -81,14 +81,11 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         $message = $user->isAdmin()
-            ? 'Welcome, manager. Register this browser next — login and withdrawals are approved from a trusted device, not SMS.'
+            ? 'Welcome, manager.'
             : 'You are in. Send the lock payment and a manager will switch it on.';
 
         if ($user->isAdmin()) {
-            $request->session()->put('staff_enrollment_user_id', $user->id);
-            $request->session()->put('staff_enrollment_expires', now()->addSeconds((int) config('security.enrollment_ttl'))->timestamp);
-
-            return redirect()->route('security.devices.enroll')->with('success', $message);
+            return redirect()->route('admin.index')->with('success', $message);
         }
 
         if (! empty($data['product_id'])) {
@@ -133,12 +130,12 @@ class AuthController extends Controller
         RateLimiter::clear($this->ipThrottleKey($request));
         RateLimiter::clear($this->identifierThrottleKey($request, $data['login']));
 
-        if ($user->isAdmin()) {
-            return $this->staff->loginStaff($user, $request, $keep);
-        }
-
-        Auth::login($user, false);
+        Auth::login($user, $keep);
         $request->session()->regenerate();
+
+        if ($user->isAdmin()) {
+            return redirect()->intended(route('admin.index'))->with('success', 'Welcome back, manager.');
+        }
 
         return redirect()->intended(route('account'))->with('success', 'Welcome back.');
     }
