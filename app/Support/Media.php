@@ -80,10 +80,6 @@ class Media
             return null;
         }
 
-        if (is_file(public_path('uploads/'.$path))) {
-            return asset('uploads/'.$path);
-        }
-
         return url('media/'.$path);
     }
 
