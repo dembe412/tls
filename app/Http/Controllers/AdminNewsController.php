@@ -78,7 +78,7 @@ class AdminNewsController extends Controller
             'title' => ['required', 'string', 'max:120'],
             'body' => ['required', 'string', 'max:4000'],
             'badge' => ['nullable', 'string', 'max:30'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp'],
         ]);
 
         $data['badge'] = $data['badge'] ?: 'Post';

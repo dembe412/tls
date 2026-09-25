@@ -25,8 +25,8 @@
     </label>
     <label>
         <span>Profile photo</span>
-        <input class="file-input" type="file" name="avatar" accept="image/jpeg,image/png,image/webp" data-max-upload-mb="2">
-        <small class="hint">JPG, PNG or WebP. Maximum 2 MB.</small>
+        <input class="file-input" type="file" name="avatar" accept="image/jpeg,image/png,image/webp">
+        <small class="hint">JPG, PNG or WebP.</small>
     </label>
     <button class="btn btn-primary" type="submit">Save profile</button>
 </form>

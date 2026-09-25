@@ -119,12 +119,7 @@
                 }
             }
 
-            if (input.files[0]?.size > maxBytes) {
-                input.setCustomValidity('Please choose an image under 3 MB.');
-                input.reportValidity();
-            } else {
-                input.setCustomValidity('');
-            }
+            input.setCustomValidity('');
         });
     });
 })();

@@ -107,7 +107,7 @@ class AdminProductController extends Controller
             'tagline' => ['nullable', 'string', 'max:180'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'image_key' => ['nullable', 'string', 'max:40'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp'],
         ]);
 
         $data['kind'] = $kind;
