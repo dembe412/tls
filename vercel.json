@@ -10,6 +10,10 @@
     },
     "routes": [
         {
+            "src": "/media/(.*)",
+            "dest": "/api/index.php"
+        },
+        {
             "src": "/(.*\\.(?:css|gif|ico|jpeg|jpg|js|map|png|svg|ttf|txt|webp|woff2?))",
             "dest": "/public/$1"
         },

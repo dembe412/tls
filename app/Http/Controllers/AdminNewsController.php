@@ -39,15 +39,17 @@ class AdminNewsController extends Controller
     public function update(Request $request, NewsArticle $article)
     {
         $data = $this->validated($request);
+        $oldImage = null;
 
         if ($path = $this->storeImage($request)) {
-            if ($article->image_path && $article->image_path !== $article->product?->image_path) {
-                Media::delete($article->image_path);
-            }
+            $oldImage = $article->image_path !== $article->product?->image_path
+                ? $article->image_path
+                : null;
             $data['image_path'] = $path;
         }
 
         $article->update($data);
+        Media::delete($oldImage);
 
         if (! $article->user_id) {
             $article->update(['user_id' => $request->user()->id]);
@@ -76,7 +78,7 @@ class AdminNewsController extends Controller
             'title' => ['required', 'string', 'max:120'],
             'body' => ['required', 'string', 'max:4000'],
             'badge' => ['nullable', 'string', 'max:30'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
         $data['badge'] = $data['badge'] ?: 'Post';

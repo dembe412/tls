@@ -120,18 +120,20 @@ class AccountController extends Controller
                 'max:20',
                 Rule::unique('users', 'phone')->ignore($user->id),
             ],
-            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
         $user->name = $data['name'];
         $user->phone = $data['phone'] ?? null;
+        $oldAvatar = null;
 
         if ($request->hasFile('avatar')) {
-            Media::delete($user->avatar_path);
+            $oldAvatar = $user->avatar_path;
             $user->avatar_path = Media::store($request->file('avatar'), 'avatars');
         }
 
         $user->save();
+        Media::delete($oldAvatar);
 
         return back()->with('success', 'Your profile is updated. Sign in with your username or phone.');
     }

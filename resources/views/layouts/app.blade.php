@@ -49,6 +49,6 @@
         @include('partials.signup-modal')
         @include('partials.profile-modal')
     </div>
-    <script src="{{ asset('js/app.js') }}?v=10"></script>
+    <script src="{{ asset('js/app.js') }}?v=12"></script>
 </body>
 </html>

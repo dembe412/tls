@@ -3,16 +3,45 @@
 namespace App\Support;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Media
 {
     public static function store(UploadedFile $file, string $folder): string
     {
-        $path = $file->store($folder, 'public');
+        $extension = $file->guessExtension() ?: $file->getClientOriginalExtension() ?: 'bin';
+        $filename = Str::random(40).'.'.$extension;
+        $path = trim($folder, '/').'/'.$filename;
+        $mime = $file->getMimeType() ?: 'application/octet-stream';
+        $size = $file->getSize() ?: 0;
+        $content = base64_encode($file->get());
 
-        static::mirror($path);
+        // Save to database for persistent storage across Vercel serverless lambdas
+        try {
+            DB::table('media_files')->updateOrInsert(
+                ['path' => $path],
+                [
+                    'mime_type' => $mime,
+                    'size' => $size,
+                    'content' => $content,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        // Also save to public disk if disk is writable (e.g. testing / local dev)
+        try {
+            Storage::disk('public')->put($path, $file->get());
+            static::mirror($path);
+        } catch (\Throwable) {
+            // Read-only filesystem on Vercel
+        }
 
         return $path;
     }
@@ -21,6 +50,12 @@ class Media
     {
         if (! $path) {
             return;
+        }
+
+        try {
+            DB::table('media_files')->where('path', $path)->delete();
+        } catch (\Throwable) {
+            // Ignore DB deletion errors
         }
 
         try {

@@ -8,6 +8,7 @@ $requiredDirectories = [
     $runtimeStorage.'/framework/sessions',
     $runtimeStorage.'/framework/cache',
     $runtimeStorage.'/framework/cache/data',
+    $runtimeStorage.'/app/public',
     $runtimeStorage.'/logs',
     $runtimeCache,
 ];

@@ -36,8 +36,8 @@
             </label>
             <label>
                 <span>Picture</span>
-                <input class="file-input" type="file" name="image" accept="image/jpeg,image/png,image/webp">
-                <small class="hint">JPG, PNG or WebP. Shown like a post photo. Max 4 MB.</small>
+                <input class="file-input" type="file" name="image" accept="image/jpeg,image/png,image/webp" data-max-upload-mb="2">
+                <small class="hint">JPG, PNG or WebP. Shown like a post photo. Maximum 2 MB.</small>
             </label>
             @if ($article->exists && $article->imageUrl())
                 <div class="preview-lock">

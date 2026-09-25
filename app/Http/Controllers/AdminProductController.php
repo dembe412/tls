@@ -56,11 +56,14 @@ class AdminProductController extends Controller
         $data['image_key'] = $data['image_key'] ?: $product->image_key ?: Str::slug($data['name']);
 
         if ($path = $this->storeImage($request)) {
-            Media::delete($product->image_path);
+            $oldImage = $product->image_path;
             $data['image_path'] = $path;
+        } else {
+            $oldImage = null;
         }
 
         $product->update($data);
+        Media::delete($oldImage);
 
         return redirect()->route('admin.index')->with('success', $product->name.' has been updated.');
     }
@@ -104,7 +107,7 @@ class AdminProductController extends Controller
             'tagline' => ['nullable', 'string', 'max:180'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'image_key' => ['nullable', 'string', 'max:40'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
         $data['kind'] = $kind;

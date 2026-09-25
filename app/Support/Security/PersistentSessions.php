@@ -65,10 +65,21 @@ class PersistentSessions
             return null;
         }
 
-        $row->forceFill(['last_used_at' => now()])->save();
-        $row->device?->forceFill(['last_used_at' => now()])->save();
+        $user = $row->user;
 
-        return $row->user;
+        if (! $user || $user->isAdmin()) {
+            $row->update(['revoked_at' => now()]);
+            Cookie::queue(Cookie::forget(config('security.persist_cookie')));
+
+            return null;
+        }
+
+        $device = $row->device;
+        $row->update(['revoked_at' => now()]);
+        $device?->forceFill(['last_used_at' => now()])->save();
+        $this->issue($user, $request, $device);
+
+        return $user;
     }
 
     public function forget(Request $request): void

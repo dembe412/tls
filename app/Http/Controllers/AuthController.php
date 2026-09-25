@@ -107,27 +107,31 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $this->ensureIsNotRateLimited($request);
-
         $data = $request->validate([
-            'login' => ['required', 'string'],
+            'login' => ['required', 'string', 'max:120'],
             'password' => ['required', 'string'],
             'keep_signed_in' => ['sometimes', 'boolean'],
         ]);
+
+        $this->ensureIsNotRateLimited($request, $data['login']);
 
         $user = User::findByLogin($data['login']);
         $keep = $request->boolean('keep_signed_in');
 
         if (! $user || ! Hash::check($data['password'], $user->password)) {
-            RateLimiter::hit($this->throttleKey($request), 60);
-            Audit::record('login_failed', $request, $user, null, ['login' => $data['login']]);
+            RateLimiter::hit($this->ipThrottleKey($request), 60);
+            RateLimiter::hit($this->identifierThrottleKey($request, $data['login']), 60);
+            Audit::record('login_failed', $request, $user, null, [
+                'login_hash' => $this->identifierHash($data['login']),
+            ]);
 
             throw ValidationException::withMessages([
                 'login' => 'Those details do not match a TSL account.',
             ]);
         }
 
-        RateLimiter::clear($this->throttleKey($request));
+        RateLimiter::clear($this->ipThrottleKey($request));
+        RateLimiter::clear($this->identifierThrottleKey($request, $data['login']));
 
         if ($user->isAdmin()) {
             return $this->staff->loginStaff($user, $request, $keep);
@@ -167,9 +171,12 @@ class AuthController extends Controller
         return User::query()->where('referral_code', $code)->first();
     }
 
-    private function ensureIsNotRateLimited(Request $request): void
+    private function ensureIsNotRateLimited(Request $request, string $identifier): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey($request), (int) config('security.max_login_attempts', 5))) {
+        $maxAttempts = (int) config('security.max_login_attempts', 5);
+
+        if (! RateLimiter::tooManyAttempts($this->ipThrottleKey($request), $maxAttempts)
+            && ! RateLimiter::tooManyAttempts($this->identifierThrottleKey($request, $identifier), $maxAttempts)) {
             return;
         }
 
@@ -178,8 +185,18 @@ class AuthController extends Controller
         ]);
     }
 
-    private function throttleKey(Request $request): string
+    private function ipThrottleKey(Request $request): string
     {
         return 'login:'.$request->ip();
+    }
+
+    private function identifierThrottleKey(Request $request, string $identifier): string
+    {
+        return 'login:'.$request->ip().':'.$this->identifierHash($identifier);
+    }
+
+    private function identifierHash(string $identifier): string
+    {
+        return hash_hmac('sha256', mb_strtolower(trim($identifier)), (string) config('app.key'));
     }
 }

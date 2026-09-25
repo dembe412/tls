@@ -110,4 +110,9 @@ class AdminProductTest extends TestCase
             ->get(route('admin.products.create'))
             ->assertRedirect(route('account'));
     }
+
+    public function test_media_route_rejects_path_traversal(): void
+    {
+        $this->get('/media/../.env')->assertNotFound();
+    }
 }

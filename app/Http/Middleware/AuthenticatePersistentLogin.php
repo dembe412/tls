@@ -19,6 +19,7 @@ class AuthenticatePersistentLogin
 
             if ($user) {
                 Auth::login($user, false);
+                $request->session()->regenerate();
             }
         }
 

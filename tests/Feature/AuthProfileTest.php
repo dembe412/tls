@@ -3,9 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\PersistentLogin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AuthProfileTest extends TestCase
@@ -83,6 +85,24 @@ class AuthProfileTest extends TestCase
             'login' => '0771234567',
             'password' => 'password',
         ])->assertRedirect();
+    }
+
+    public function test_persistent_admin_cookie_cannot_bypass_device_approval(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $selector = Str::random(24);
+        $validator = Str::random(48);
+
+        PersistentLogin::query()->create([
+            'user_id' => $admin->id,
+            'selector' => $selector,
+            'token_hash' => hash_hmac('sha256', $validator, (string) config('app.key')),
+            'expires_at' => now()->addDay(),
+        ]);
+
+        $this->withCookie(config('security.persist_cookie'), $selector.'.'.$validator)
+            ->get(route('admin.index'))
+            ->assertGuest();
     }
 
     public function test_any_member_can_update_their_name_phone_and_photo(): void

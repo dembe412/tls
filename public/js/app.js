@@ -39,6 +39,97 @@
 })();
 
 (() => {
+    const maxDimension = 1600;
+    const maxBytes = 3 * 1024 * 1024; // 3MB safety limit
+
+    async function compressImageFile(file) {
+        if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') {
+            return file;
+        }
+
+        if (file.size <= 1.2 * 1024 * 1024) {
+            return file;
+        }
+
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxDimension || height > maxDimension) {
+                        if (width > height) {
+                            height = Math.round((height * maxDimension) / width);
+                            width = maxDimension;
+                        } else {
+                            width = Math.round((width * maxDimension) / height);
+                            height = maxDimension;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(
+                        (blob) => {
+                            if (blob && blob.size < file.size) {
+                                const newFile = new File([blob], file.name.replace(/\.[^.]+$/, '') + '.jpg', {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now(),
+                                });
+                                resolve(newFile);
+                            } else {
+                                resolve(file);
+                            }
+                        },
+                        'image/jpeg',
+                        0.82
+                    );
+                };
+                img.onerror = () => resolve(file);
+            };
+            reader.onerror = () => resolve(file);
+        });
+    }
+
+    document.querySelectorAll('input[type="file"][accept*="image"]').forEach((input) => {
+        input.addEventListener('change', async () => {
+            const file = input.files?.[0];
+            if (!file) return;
+
+            if (file.size > 1.2 * 1024 * 1024) {
+                const originalLabel = input.title;
+                input.setCustomValidity('Optimizing image for upload...');
+                try {
+                    const compressed = await compressImageFile(file);
+                    if (compressed && window.DataTransfer) {
+                        const dt = new DataTransfer();
+                        dt.items.add(compressed);
+                        input.files = dt.files;
+                    }
+                } catch {
+                    // Fall back to original file
+                }
+            }
+
+            if (input.files[0]?.size > maxBytes) {
+                input.setCustomValidity('Please choose an image under 3 MB.');
+                input.reportValidity();
+            } else {
+                input.setCustomValidity('');
+            }
+        });
+    });
+})();
+
+(() => {
     const form = document.getElementById('pay-form');
     if (!form) return;
 

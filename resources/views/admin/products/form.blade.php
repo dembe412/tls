@@ -99,8 +99,8 @@
 
             <label>
                 <span>Lock photo</span>
-                <input class="file-input" type="file" name="image" accept="image/jpeg,image/png,image/webp">
-                <small class="hint">JPG, PNG or WebP. This is the lock picture on the {{ $isVip ? 'VIP bar' : 'shop' }}. Max 4 MB.</small>
+                <input class="file-input" type="file" name="image" accept="image/jpeg,image/png,image/webp" data-max-upload-mb="2">
+                <small class="hint">JPG, PNG or WebP. This is the lock picture on the {{ $isVip ? 'VIP bar' : 'shop' }}. Maximum 2 MB.</small>
             </label>
             @if ($product->exists)
                 <div class="preview-lock">
