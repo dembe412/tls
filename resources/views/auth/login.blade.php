@@ -10,7 +10,6 @@
 
 <section class="auth-wrap">
     <div class="auth-card">
-        <h2>Sign in</h2>
         <p class="auth-lead">Use your username or phone number, plus your password. Managers then approve the login from a registered browser — not SMS.</p>
         <form method="POST" action="{{ route('login') }}" class="auth-form">
             @csrf
