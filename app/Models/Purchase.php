@@ -107,6 +107,17 @@ class Purchase extends Model
         return max(0, $this->earnedSoFar() - $this->withdrawnAmount());
     }
 
+    /**
+     * Members may cash out whenever earned balance covers the minimum.
+     * Daily earnings still stop after duration_days (usually 35).
+     */
+    public function canCashOut(?int $minimum = null): bool
+    {
+        $minimum ??= (int) config('payments.min_withdraw', 2000);
+
+        return $this->status === 'active' && $this->availableToCashOut() >= $minimum;
+    }
+
     public function isMatured(): bool
     {
         return $this->status === 'active' && $this->daysLeft() === 0;

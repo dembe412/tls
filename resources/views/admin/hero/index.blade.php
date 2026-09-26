@@ -275,7 +275,7 @@
 
                         <label>
                             <span>Trust Point 1</span>
-                            <input class="field-pill" name="trust_1" value="{{ old('trust_1', $hero['trust_1']) }}" placeholder="35-Day Cashout" maxlength="60">
+                            <input class="field-pill" name="trust_1" value="{{ old('trust_1', $hero['trust_1']) }}" placeholder="Cash Out Any Day" maxlength="60">
                         </label>
 
                         <label>
@@ -285,7 +285,7 @@
 
                         <label>
                             <span>Trust Point 3</span>
-                            <input class="field-pill" name="trust_3" value="{{ old('trust_3', $hero['trust_3']) }}" placeholder="Min Withdraw: 2,000 UGX" maxlength="60">
+                            <input class="field-pill" name="trust_3" value="{{ old('trust_3', $hero['trust_3']) }}" placeholder="Min 2,000 UGX · 6% fee" maxlength="60">
                         </label>
                     </fieldset>
                 </div>

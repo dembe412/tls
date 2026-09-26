@@ -139,6 +139,6 @@ class Product extends Model
             return "Create a free TSL account to claim {$this->name}. Send {$this->priceLabel()} and earn {$this->salaryLabel()} each month — paid on the 1st.";
         }
 
-        return "Create a free TSL account to claim {$this->name}. It pays {$this->dailyLabel()} every day for {$this->duration_days} days — then you cash out.";
+        return "Create a free TSL account to claim {$this->name}. It pays {$this->dailyLabel()} every day — cash out any day once you reach the minimum.";
     }
 }

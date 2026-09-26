@@ -33,6 +33,7 @@ class AccountController extends Controller
             'whatsapp' => $this->whatsappUrl(),
             'whatsappLabel' => $this->whatsappLabel(),
             'minWithdraw' => (int) config('payments.min_withdraw', 2000),
+            'withdrawFeePercent' => (int) config('payments.withdraw_fee_percent', 6),
             'accountBalance' => Money::ugx($user->accountBalance()),
             'rechargeBalance' => Money::ugx($user->rechargeBalance()),
             'transactions' => $transactions,

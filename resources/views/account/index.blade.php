@@ -109,22 +109,26 @@
                         @endif
                         @if ($purchase->status === 'active')
                             <p class="muted">
-                                {{ $purchase->isMatured() ? 'Cycle complete — ready to cash out' : $purchase->daysLeft().' of '.$purchase->duration_days.' days left' }}
+                                @if ($purchase->isMatured())
+                                    Daily earnings finished on this lock
+                                @else
+                                    {{ $purchase->daysLeft() }} of {{ $purchase->duration_days }} earning days left
+                                @endif
                             </p>
                         @endif
                     </div>
                 </div>
                 <div class="owner-foot">
                     <div>
-                        <p class="muted">Earned so far</p>
-                        <strong>{{ \App\Support\Money::ugx($purchase->earnedSoFar()) }}</strong>
+                        <p class="muted">Earned {{ \App\Support\Money::ugx($purchase->earnedSoFar()) }} · available</p>
+                        <strong>{{ \App\Support\Money::ugx($purchase->availableToCashOut()) }}</strong>
                     </div>
                     <form method="POST" action="{{ route('purchases.cash-out', $purchase) }}">
                         @csrf
                         <button
                             class="btn btn-small"
                             type="submit"
-                            @disabled(! $purchase->isMatured() || $purchase->availableToCashOut() < $minWithdraw)
+                            @disabled(! $purchase->canCashOut($minWithdraw))
                         >
                             {{ $purchase->isMatured() && $purchase->availableToCashOut() <= 0 ? 'Cashed out' : 'Cash out' }}
                         </button>
@@ -207,6 +211,8 @@
     <article class="acc-block" id="withdraw">
         <h2 class="acc-label">Withdraw</h2>
         <p class="withdraw-note">
+            Cash out any day, any time — as soon as available earnings on a lock reach {{ \App\Support\Money::ugx($minWithdraw) }}.
+            A {{ $withdrawFeePercent }}% charge is taken on every withdraw; you receive the rest.
             Minimum withdraw is {{ \App\Support\Money::ugx($minWithdraw) }} according to the local Ugandan instructions that govern the financial regulations.
         </p>
         @if ($withdrawals->isNotEmpty())
@@ -214,15 +220,22 @@
                 @foreach ($withdrawals as $withdrawal)
                     <li>
                         <span>
-                            {{ \App\Support\Money::ugx($withdrawal->amount) }}
-                            <small>{{ $withdrawal->reference }} · {{ $withdrawal->requested_at->toFormattedDateString() }}</small>
+                            {{ \App\Support\Money::ugx($withdrawal->netAmount()) }}
+                            <small>
+                                {{ $withdrawal->reference }}
+                                · request {{ \App\Support\Money::ugx($withdrawal->amount) }}
+                                @if ((int) $withdrawal->fee_amount > 0)
+                                    · {{ $withdrawFeePercent }}% fee {{ \App\Support\Money::ugx($withdrawal->fee_amount) }}
+                                @endif
+                                · {{ $withdrawal->requested_at->toFormattedDateString() }}
+                            </small>
                         </span>
                         <span class="pill">{{ $withdrawal->status }}</span>
                     </li>
                 @endforeach
             </ul>
         @else
-            <p class="acc-empty">No cash outs yet. When a lock cycle ends and the amount is at least {{ \App\Support\Money::ugx($minWithdraw) }}, use Cash out on that owner card.</p>
+            <p class="acc-empty">No cash outs yet. When available earnings reach {{ \App\Support\Money::ugx($minWithdraw) }}, tap Cash out on that owner card — any day.</p>
         @endif
     </article>
 

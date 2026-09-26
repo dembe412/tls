@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'TSL Smart Locks — available now')
-@section('description', 'Browse TSL Tuya smart locks for purchase. Each lock pays a daily amount and you cash out after 35 days.')
+@section('description', 'Browse TSL Tuya smart locks for purchase. Earn daily interest and cash out any day once you reach 2,000 UGX.')
 
 @section('content')
 @php $tab = 'home'; @endphp
@@ -259,7 +259,7 @@
         <div class="stat-row">
             <div class="stat"><b>{{ $lockCount }}</b><span>locks in stock</span></div>
             <div class="stat"><b>Daily</b><span>interest per lock</span></div>
-            <div class="stat"><b>35</b><span>days to cash out</span></div>
+            <div class="stat"><b>Any day</b><span>cash out (min 2,000)</span></div>
         </div>
         @include('partials.community-card')
     </div>

@@ -113,7 +113,7 @@ class TeamWithdrawTest extends TestCase
         $this->assertDatabaseCount('withdrawals', 0);
     }
 
-    public function test_matured_lock_can_cash_out_when_above_the_minimum(): void
+    public function test_active_lock_can_cash_out_any_day_when_above_the_minimum(): void
     {
         $user = User::factory()->create();
         $product = Product::query()->where('name', 'TS-20')->firstOrFail();
@@ -124,9 +124,9 @@ class TeamWithdrawTest extends TestCase
             'status' => 'active',
             'principal' => $product->cost_price,
             'daily_income' => 1000,
-            'duration_days' => 3,
+            'duration_days' => 35,
             'activated_at' => now()->subDays(3),
-            'matures_at' => now(),
+            'matures_at' => now()->addDays(32),
         ]);
 
         $this->actingAs($user)
@@ -137,7 +137,29 @@ class TeamWithdrawTest extends TestCase
             'user_id' => $user->id,
             'purchase_id' => $purchase->id,
             'amount' => 3000,
-            'status' => 'awaiting_approval',
+            'fee_amount' => 180,
+            'status' => 'pending',
         ]);
+    }
+
+    public function test_daily_earnings_still_cap_at_duration_after_early_cash_out(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::query()->where('name', 'TS-20')->firstOrFail();
+
+        $purchase = Purchase::query()->create([
+            'user_id' => $user->id,
+            'product_id' => $product->id,
+            'status' => 'active',
+            'principal' => $product->cost_price,
+            'daily_income' => 1000,
+            'duration_days' => 35,
+            'activated_at' => now()->subDays(40),
+            'matures_at' => now()->subDays(5),
+        ]);
+
+        $this->assertSame(35, $purchase->daysRun());
+        $this->assertSame(35000, $purchase->earnedSoFar());
+        $this->assertTrue($purchase->isMatured());
     }
 }

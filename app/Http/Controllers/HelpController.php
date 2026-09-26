@@ -23,7 +23,7 @@ class HelpController extends Controller
             ],
             [
                 'q' => 'How does daily interest work?',
-                'a' => 'Each lock pays the daily amount shown on its card. Earnings start the day the manager marks it as bought, and you can cash out when the cycle ends — 35 days for locks.',
+                'a' => 'Each lock pays the daily amount shown on its card. Earnings start the day the manager marks it as bought and continue for up to 35 days. Cash out is separate — you may withdraw any day once available earnings reach 2,000 UGX.',
             ],
             [
                 'q' => 'What are VIP levels?',
@@ -31,7 +31,7 @@ class HelpController extends Controller
             ],
             [
                 'q' => 'How do I withdraw?',
-                'a' => 'Open My account, go to Withdraw, then cash out a matured lock. Minimum withdraw is 2,000 UGX according to the local Ugandan instructions that govern the financial regulations. A manager must then approve the cash-out from a registered browser.',
+                'a' => 'Open My account and tap Cash out on an owner card any day once available earnings are at least 2,000 UGX. There is no wait for day 35. A 6% charge applies on each withdraw — you receive the rest after the fee. A manager then marks the cash-out as paid.',
             ],
             [
                 'q' => 'How do managers sign in?',

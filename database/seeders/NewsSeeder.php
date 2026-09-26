@@ -14,29 +14,29 @@ class NewsSeeder extends Seeder
             [
                 'slug' => 'welcome-to-tsl',
                 'title' => 'Welcome to TSL — own a lock, earn every day',
-                'excerpt' => 'Every Tuya smart lock on TSL pays a daily amount set by the manager. Cash out after 35 days.',
+                'excerpt' => 'Every Tuya smart lock on TSL pays a daily amount set by the manager. Cash out any day once you reach 2,000 UGX.',
                 'badge' => 'Start here',
                 'published_at' => now()->subDays(4),
                 'body' => <<<'TXT'
 TSL is simple on purpose.
 
-You pick a smart lock. You send the money. A manager switches that lock on for your account. From that day, it pays the daily interest shown on the lock — every morning — for 35 days.
+You pick a smart lock. You send the money. A manager switches that lock on for your account. From that day, it pays the daily interest shown on the lock — every morning.
 
-Then you cash out.
+You can cash out any day once available earnings reach 2,000 UGX. A 6% charge applies on each withdraw.
 
 No hidden packages. The lock you see on the home page is the lock you own.
 TXT,
             ],
             [
                 'slug' => 'how-cash-out-works',
-                'title' => 'How the 35-day cash-out works',
-                'excerpt' => 'Earnings grow daily. Withdraw sits on day 35 — exactly as promised.',
+                'title' => 'How daily cash-out works',
+                'excerpt' => 'Withdraw any day you have at least 2,000 UGX available — a 6% fee applies. No wait for day 35.',
                 'badge' => 'Guide',
                 'published_at' => now()->subDays(2),
                 'body' => <<<'TXT'
 Day 1 starts when your lock is marked as bought.
 
-Each day after that, your owner card adds the lock’s daily income. You can watch it grow, but cash-out unlocks when the 35-day cycle is complete.
+Each day after that, your owner card adds the lock’s daily income. Cash out whenever available earnings are at least 2,000 UGX — any day, any time. A 6% charge is taken on each withdraw.
 
 Tap Cash out on the owner card. A manager confirms the payment the same way they confirmed your lock.
 TXT,

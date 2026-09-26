@@ -137,7 +137,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem;">
                 <label>
                     <span>Trust point 1</span>
-                    <input class="field-pill" name="trust_1" value="{{ old('trust_1', $hero['trust_1']) }}" placeholder="35-Day Cashout" maxlength="80">
+                    <input class="field-pill" name="trust_1" value="{{ old('trust_1', $hero['trust_1']) }}" placeholder="Cash Out Any Day" maxlength="80">
                 </label>
                 <label>
                     <span>Trust point 2</span>
@@ -145,7 +145,7 @@
                 </label>
                 <label>
                     <span>Trust point 3</span>
-                    <input class="field-pill" name="trust_3" value="{{ old('trust_3', $hero['trust_3']) }}" placeholder="Min Withdraw: 2,000 UGX" maxlength="80">
+                    <input class="field-pill" name="trust_3" value="{{ old('trust_3', $hero['trust_3']) }}" placeholder="Min 2,000 UGX · 6% fee" maxlength="80">
                 </label>
             </div>
             <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; cursor: pointer;">
@@ -271,6 +271,10 @@
                 <p>
                     {{ $withdrawal->reference }}
                     · {{ $withdrawal->status }}
+                    · pay {{ \App\Support\Money::ugx($withdrawal->netAmount()) }}
+                    @if ((int) $withdrawal->fee_amount > 0)
+                        (fee {{ \App\Support\Money::ugx($withdrawal->fee_amount) }})
+                    @endif
                     · {{ $withdrawal->user?->phone }}
                     · {{ $withdrawal->requested_at->toFormattedDateString() }}
                 </p>

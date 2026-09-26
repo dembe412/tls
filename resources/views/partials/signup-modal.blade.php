@@ -10,7 +10,7 @@
         <ul class="perks">
             <li>Own a real Tuya smart lock</li>
             <li>Earn a daily amount on your lock</li>
-            <li>Cash out after 35 days</li>
+            <li>Cash out any day (min 2,000 UGX · 6% fee)</li>
         </ul>
         <a id="signup-cta" class="btn btn-primary" href="{{ route('register') }}">Create my free account</a>
         <p class="fine">Already a member? <a href="{{ route('login') }}">Sign in</a></p>

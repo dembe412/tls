@@ -64,7 +64,10 @@ class ShopTest extends TestCase
             ->assertSee('Total withdraws')
             ->assertSee('Earned daily')
             ->assertSee('Withdraw')
+            ->assertSee('Cash out any day, any time')
+            ->assertSee('A 6% charge is taken on every withdraw')
             ->assertSee('Minimum withdraw is 2,000 UGX according to the local Ugandan instructions that govern the financial regulations')
+            ->assertDontSee('35 days to cash out')
             ->assertDontSee('Other locks available')
             ->assertDontSee('Marketing benefits');
     }

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'TSL Smart Locks')</title>
-    <meta name="description" content="@yield('description', 'Browse TSL Tuya smart locks, earn a daily amount and cash out after 35 days.')">
+    <meta name="description" content="@yield('description', 'Browse TSL Tuya smart locks. Earn daily interest and cash out any day once you reach 2,000 UGX (6% fee).')">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">

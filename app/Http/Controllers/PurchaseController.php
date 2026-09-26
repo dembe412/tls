@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\Withdrawal;
 use App\Support\Money;
 use App\Support\PaymentMethods;
 use App\Support\Referrals;
 use App\Support\Security\Audit;
-use App\Support\Security\ChallengeVault;
 use App\Support\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -150,21 +150,24 @@ class PurchaseController extends Controller
 
         $amount = $purchase->availableToCashOut();
         $minimum = (int) config('payments.min_withdraw', 2000);
+        $feePercent = Withdrawal::feePercent();
+        $fee = Withdrawal::feeFor($amount);
 
-        if (! $purchase->isMatured() || $amount <= 0) {
-            return back()->with('info', 'This lock is not ready to cash out yet.');
+        if ($purchase->status !== 'active' || $amount <= 0) {
+            return back()->with('info', 'This lock has nothing available to cash out yet.');
         }
 
         if ($amount < $minimum) {
             return back()->with(
                 'info',
-                'Minimum withdraw is '.Money::ugx($minimum).' according to the local Ugandan instructions that govern the financial regulations.'
+                'Minimum withdraw is '.Money::ugx($minimum).' according to the local Ugandan instructions that govern the financial regulations. A '.$feePercent.'% charge applies on each withdraw.'
             );
         }
 
         $withdrawal = $purchase->withdrawals()->create([
             'user_id' => $request->user()->id,
             'amount' => $amount,
+            'fee_amount' => $fee,
             'status' => 'pending',
             'reference' => 'WD'.strtoupper(Str::random(8)),
             'requested_at' => now(),
@@ -175,11 +178,13 @@ class PurchaseController extends Controller
             'withdrawal_id' => $withdrawal->id,
             'reference' => $withdrawal->reference,
             'amount' => $amount,
+            'fee_amount' => $fee,
+            'net_amount' => $withdrawal->netAmount(),
         ]);
 
         return back()->with(
             'success',
-            'Cash out requested. A manager will process '.$withdrawal->reference.'. Minimum withdraw is '.Money::ugx($minimum).'.'
+            'Cash out requested for '.Money::ugx($amount).' ('.$feePercent.'% fee '.Money::ugx($fee).', you receive '.Money::ugx($withdrawal->netAmount()).'). A manager will process '.$withdrawal->reference.'.'
         );
     }
 }

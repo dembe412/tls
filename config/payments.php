@@ -2,6 +2,7 @@
 
 return [
     'min_withdraw' => (int) env('MIN_WITHDRAW_UGX', 2000),
+    'withdraw_fee_percent' => (int) env('WITHDRAW_FEE_PERCENT', 6),
 
     'methods' => [
         'airtel' => [

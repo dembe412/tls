@@ -12,6 +12,7 @@ class Withdrawal extends Model
         'user_id',
         'purchase_id',
         'amount',
+        'fee_amount',
         'status',
         'reference',
         'requested_at',
@@ -43,5 +44,24 @@ class Withdrawal extends Model
     public function isAuthorized(): bool
     {
         return in_array($this->status, ['authorized', 'pending', 'paid'], true) || $this->authorized_at !== null;
+    }
+
+    public static function feePercent(): int
+    {
+        return max(0, (int) config('payments.withdraw_fee_percent', 6));
+    }
+
+    public static function feeFor(int $amount): int
+    {
+        if ($amount <= 0) {
+            return 0;
+        }
+
+        return (int) round($amount * self::feePercent() / 100);
+    }
+
+    public function netAmount(): int
+    {
+        return max(0, (int) $this->amount - (int) $this->fee_amount);
     }
 }

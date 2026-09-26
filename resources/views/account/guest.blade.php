@@ -8,7 +8,7 @@
 <header class="page-head">
     <p class="kicker">Members area</p>
     <h1>Your locks live here</h1>
-    <p class="sub">Create a free account to request a lock, watch your daily interest grow, and cash out on day 35.</p>
+    <p class="sub">Create a free account to request a lock, watch your daily interest grow, and cash out any day once you have enough.</p>
 </header>
 
 <section class="auth-wrap">
@@ -18,7 +18,7 @@
         <ul class="perks">
             <li>Owner card for every lock you buy</li>
             <li>Daily earnings you can actually see</li>
-            <li>Cash-out button when the cycle ends</li>
+            <li>Cash out any day once you reach 2,000 UGX</li>
         </ul>
         <a class="btn btn-primary" href="{{ route('register') }}">Create a free account</a>
         <p class="fine">Already with us? <a href="{{ route('login') }}">Sign in</a></p>
