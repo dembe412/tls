@@ -27,6 +27,10 @@
         <env name="DB_DATABASE" value=":memory:" force="true"/>
         <env name="DB_URL" value="" force="true"/>
         <env name="DATABASE_URL" value="" force="true"/>
+        <env name="DB_HOST" value="" force="true"/>
+        <env name="DB_USERNAME" value="" force="true"/>
+        <env name="DB_PASSWORD" value="" force="true"/>
+        <env name="MAIL_MAILER" value="array"/>
         <env name="WITHDRAW_FEE_PERCENT" value="6"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
