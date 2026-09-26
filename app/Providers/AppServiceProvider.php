@@ -20,7 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if ($this->app->environment('production') || isset($_SERVER['VERCEL']) || isset($_ENV['VERCEL'])) {
+        $isLocalHost = in_array(request()->getHost(), ['localhost', '127.0.0.1', '::1'], true);
+
+        if (! $isLocalHost && ($this->app->environment('production') || isset($_SERVER['VERCEL']) || isset($_ENV['VERCEL']))) {
             URL::forceScheme('https');
         }
     }

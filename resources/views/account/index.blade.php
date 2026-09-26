@@ -14,6 +14,7 @@
     @if ($user->isAdmin())
         <div class="head-actions">
             <a class="text-link" href="{{ route('admin.index') }}">Manager console</a>
+            <a class="text-link" href="{{ route('admin.hero.index') }}">Hero slider images</a>
         </div>
     @endif
     <div class="stat-row">
@@ -32,6 +33,21 @@
 </header>
 
 <section class="acc-panel">
+    @if ($user->isAdmin())
+        <article class="acc-block" style="border: 1px solid var(--accent); background: linear-gradient(135deg, rgba(239, 138, 44, 0.08) 0%, rgba(11, 18, 30, 0.6) 100%);">
+            <h2 class="acc-label" style="color: var(--primary);">Admin Quick Access</h2>
+            <p class="acc-note">Manage dynamic homepage hero images, active slides, headlines, and catalog locks.</p>
+            <div class="acc-actions" style="margin-top: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                <a class="btn btn-primary" href="{{ route('admin.hero.index') }}" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                    <span>🖼️</span> Hero Slider & Images
+                </a>
+                <a class="btn btn-ghost" href="{{ route('admin.index') }}" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                    <span>⚙️</span> Manager Console
+                </a>
+            </div>
+        </article>
+    @endif
+
     <article class="acc-block">
         <h2 class="acc-label">Profile</h2>
         <div class="profile-row">
@@ -291,6 +307,7 @@
         <div class="acc-actions">
             <button class="btn btn-ghost" type="button" data-open-profile>Edit profile</button>
             @if ($user->isAdmin())
+                <a class="btn btn-ghost" href="{{ route('admin.hero.index') }}">Hero slider images</a>
                 <a class="btn btn-ghost" href="{{ route('security.devices') }}">Registered devices</a>
             @endif
             <form method="POST" action="{{ route('logout') }}">

@@ -397,3 +397,176 @@
         }
     });
 })();
+
+(() => {
+    const select = document.getElementById('minelab-lock-select');
+    if (!select) return;
+
+    const valCost = document.getElementById('calc-val-cost');
+    const valDaily = document.getElementById('calc-val-daily');
+    const valDays = document.getElementById('calc-val-days');
+    const valTotal = document.getElementById('calc-val-total');
+    const valRoi = document.getElementById('calc-val-roi');
+    const ctaName = document.getElementById('calc-cta-name');
+    const ctaBtn = document.getElementById('calc-cta-btn');
+    const ctaLink = document.getElementById('calc-cta-link');
+
+    const update = () => {
+        const opt = select.options[select.selectedIndex];
+        if (!opt) return;
+
+        if (valCost) valCost.textContent = opt.dataset.costLabel;
+        if (valDaily) valDaily.textContent = opt.dataset.dailyLabel;
+        if (valDays) valDays.textContent = `${opt.dataset.days} Days`;
+        if (valTotal) valTotal.textContent = opt.dataset.totalLabel;
+        if (valRoi) valRoi.textContent = `${opt.dataset.roi} ROI`;
+        if (ctaName) ctaName.textContent = opt.dataset.name;
+
+        if (ctaBtn) {
+            ctaBtn.dataset.lockId = opt.value;
+            ctaBtn.dataset.lockName = opt.dataset.name;
+            ctaBtn.dataset.lockPrice = opt.dataset.costLabel;
+            ctaBtn.dataset.lockDaily = opt.dataset.dailyLabel;
+            ctaBtn.dataset.lockImage = opt.dataset.image;
+            ctaBtn.dataset.lockHeadline = opt.dataset.headline;
+            ctaBtn.dataset.lockBody = opt.dataset.body;
+            ctaBtn.dataset.lockUrl = opt.dataset.registerUrl;
+        }
+
+        if (ctaLink) {
+            ctaLink.href = opt.dataset.payUrl || opt.dataset.registerUrl;
+        }
+    };
+
+    select.addEventListener('change', update);
+})();
+
+(() => {
+    const slider = document.getElementById('minelab-hero-slider');
+    if (!slider) return;
+
+    const slides = Array.from(slider.querySelectorAll('.minelab-slide'));
+    if (slides.length <= 1) return;
+
+    const dots = Array.from(slider.querySelectorAll('.minelab-dot'));
+    const prevBtn = document.getElementById('hero-slider-prev');
+    const nextBtn = document.getElementById('hero-slider-next');
+
+    const speedSeconds = Math.max(1, parseInt(slider.dataset.speed || '4', 10));
+    const direction = slider.dataset.direction || 'ltr';
+
+    let currentIndex = 0;
+    let timer = null;
+    let isTransitioning = false;
+
+    const showSlide = (targetIndex, animDirection = 'ltr') => {
+        if (targetIndex === currentIndex || isTransitioning) return;
+        isTransitioning = true;
+
+        const currentSlide = slides[currentIndex];
+        const nextSlide = slides[targetIndex];
+
+        const enterStart = animDirection === 'ltr' ? '-100%' : '100%';
+        const exitEnd = animDirection === 'ltr' ? '100%' : '-100%';
+
+        nextSlide.style.transition = 'none';
+        nextSlide.style.transform = `translate3d(${enterStart}, 0, 0)`;
+        nextSlide.style.opacity = '1';
+        nextSlide.classList.add('is-active');
+
+        void nextSlide.offsetWidth;
+
+        currentSlide.style.transition = 'transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease';
+        nextSlide.style.transition = 'transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease';
+
+        currentSlide.style.transform = `translate3d(${exitEnd}, 0, 0)`;
+        currentSlide.style.opacity = '0';
+        nextSlide.style.transform = 'translate3d(0, 0, 0)';
+
+        dots.forEach((dot, idx) => {
+            dot.classList.toggle('is-active', idx === targetIndex);
+        });
+
+        setTimeout(() => {
+            currentSlide.classList.remove('is-active');
+            currentSlide.style.transform = '';
+            currentSlide.style.opacity = '';
+            currentSlide.style.transition = '';
+            nextSlide.style.transition = '';
+            currentIndex = targetIndex;
+            isTransitioning = false;
+        }, 650);
+    };
+
+    const next = () => {
+        const nextIdx = (currentIndex + 1) % slides.length;
+        showSlide(nextIdx, direction);
+    };
+
+    const prev = () => {
+        const prevIdx = (currentIndex - 1 + slides.length) % slides.length;
+        showSlide(prevIdx, direction === 'ltr' ? 'rtl' : 'ltr');
+    };
+
+    const startTimer = () => {
+        stopTimer();
+        timer = setInterval(next, speedSeconds * 1000);
+    };
+
+    const stopTimer = () => {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    };
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            next();
+            startTimer();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            prev();
+            startTimer();
+        });
+    }
+
+    dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+            const targetIdx = parseInt(dot.dataset.goSlide, 10);
+            if (!isNaN(targetIdx)) {
+                showSlide(targetIdx, direction);
+                startTimer();
+            }
+        });
+    });
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    slider.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        stopTimer();
+    }, { passive: true });
+
+    slider.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchEndX - touchStartX;
+        if (Math.abs(diff) > 40) {
+            if (diff > 0) {
+                showSlide((currentIndex + 1) % slides.length, 'ltr');
+            } else {
+                showSlide((currentIndex - 1 + slides.length) % slides.length, 'rtl');
+            }
+        }
+        startTimer();
+    }, { passive: true });
+
+    slider.addEventListener('mouseenter', stopTimer);
+    slider.addEventListener('mouseleave', startTimer);
+
+    startTimer();
+})();

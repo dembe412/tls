@@ -8,6 +8,7 @@
     <h1><span>TSL</span> control</h1>
     <div class="head-actions">
         <a class="text-link" href="{{ route('account') }}">My locks</a>
+        <a class="text-link" href="{{ route('admin.hero.index') }}">Hero slider & images</a>
         <a class="text-link" href="{{ route('security.devices') }}">Devices</a>
     </div>
     <div class="stat-row three">
@@ -42,6 +43,118 @@
             <input class="field-pill" name="whatsapp" value="{{ old('whatsapp', $whatsapp) }}" placeholder="2567XXXXXXXX" maxlength="30">
         </label>
         <button class="btn btn-primary" type="submit">Save payment details</button>
+    </form>
+</section>
+
+<section class="catalog">
+    <div class="section-head">
+        <h2>Hero section & Dynamic images</h2>
+        <a class="text-link" href="{{ route('admin.hero.index') }}">Open dedicated page →</a>
+    </div>
+    <div class="auth-card" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.5rem; background: linear-gradient(135deg, rgba(239, 138, 44, 0.08) 0%, rgba(11, 18, 30, 0.6) 100%); border: 1px solid var(--accent); border-radius: 1rem; margin-bottom: 1.5rem;">
+        <div>
+            <strong style="font-size: 1.05rem; display: block; margin-bottom: 0.25rem;">🖼️ Dynamic Hero Image Slider (Moving Left to Right)</strong>
+            <p class="muted" style="margin: 0;">Upload multiple images, toggle active slides, set slider speed, adjust headlines, or customize ROI calculator.</p>
+        </div>
+        <a class="btn btn-primary" href="{{ route('admin.hero.index') }}">
+            Manage Hero Slider & Images →
+        </a>
+    </div>
+</section>
+
+<section class="catalog">
+    <div class="section-head">
+        <h2>Hero section quick appearance</h2>
+    </div>
+    <form method="POST" action="{{ route('admin.hero-settings.update') }}" enctype="multipart/form-data" class="auth-card">
+        @csrf
+        @method('PUT')
+
+        <fieldset>
+            <legend>Hero banner image</legend>
+            <div style="margin-bottom: 0.85rem;">
+                <p class="muted" style="margin-bottom: 0.5rem;">Current hero image:</p>
+                <img src="{{ $hero['image_url'] }}" alt="Current Hero Image" style="width: 100%; max-width: 320px; height: auto; border-radius: 0.85rem; border: 1px solid var(--line); box-shadow: var(--shadow); object-fit: cover;">
+            </div>
+            <label>
+                <span>Upload new hero image (JPG, PNG, WEBP)</span>
+                <input class="field-pill" type="file" name="image" accept="image/*">
+            </label>
+            @if ($hero['image_path'])
+                <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" name="remove_image" value="1">
+                    <span>Reset to MineLab default image</span>
+                </label>
+            @endif
+        </fieldset>
+
+        <fieldset>
+            <legend>Headlines & Copy</legend>
+            <label>
+                <span>Badge / Kicker text</span>
+                <input class="field-pill" name="badge" value="{{ old('badge', $hero['badge']) }}" placeholder="TUYA SMART HARDWARE · DAILY YIELD FLEET" maxlength="120">
+            </label>
+            <label>
+                <span>Primary headline</span>
+                <input class="field-pill" name="title" value="{{ old('title', $hero['title']) }}" required placeholder="ACHIEVE THE HIGHEST" maxlength="150">
+            </label>
+            <label>
+                <span>Highlighted text (Gold Gradient)</span>
+                <input class="field-pill" name="title_highlight" value="{{ old('title_highlight', $hero['title_highlight']) }}" placeholder="DAILY LOCK YIELD" maxlength="150">
+            </label>
+            <label>
+                <span>Description paragraph</span>
+                <textarea class="field-pill" name="description" rows="3" maxlength="1000" style="height: auto; border-radius: 1rem; padding: 0.75rem 1rem;">{{ old('description', $hero['description']) }}</textarea>
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Call to Action Buttons</legend>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <label>
+                    <span>Primary button text</span>
+                    <input class="field-pill" name="cta_text" value="{{ old('cta_text', $hero['cta_text']) }}" placeholder="Start Earning" maxlength="60">
+                </label>
+                <label>
+                    <span>Primary button link</span>
+                    <input class="field-pill" name="cta_url" value="{{ old('cta_url', $hero['cta_url']) }}" placeholder="#catalog" maxlength="255">
+                </label>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <label>
+                    <span>Secondary button text</span>
+                    <input class="field-pill" name="secondary_text" value="{{ old('secondary_text', $hero['secondary_text']) }}" placeholder="Redeem Bonus 🎁" maxlength="60">
+                </label>
+                <label>
+                    <span>Secondary button link</span>
+                    <input class="field-pill" name="secondary_url" value="{{ old('secondary_url', $hero['secondary_url']) }}" placeholder="{{ route('bonus') }}" maxlength="255">
+                </label>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Trust Badges & Options</legend>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem;">
+                <label>
+                    <span>Trust point 1</span>
+                    <input class="field-pill" name="trust_1" value="{{ old('trust_1', $hero['trust_1']) }}" placeholder="35-Day Cashout" maxlength="80">
+                </label>
+                <label>
+                    <span>Trust point 2</span>
+                    <input class="field-pill" name="trust_2" value="{{ old('trust_2', $hero['trust_2']) }}" placeholder="Daily Automated Payouts" maxlength="80">
+                </label>
+                <label>
+                    <span>Trust point 3</span>
+                    <input class="field-pill" name="trust_3" value="{{ old('trust_3', $hero['trust_3']) }}" placeholder="Min Withdraw: 2,000 UGX" maxlength="80">
+                </label>
+            </div>
+            <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; cursor: pointer;">
+                <input type="checkbox" name="show_calculator" value="1" {{ old('show_calculator', $hero['show_calculator']) ? 'checked' : '' }}>
+                <span>Show "How Much Will I Earn?" Interactive ROI Calculator</span>
+            </label>
+        </fieldset>
+
+        <button class="btn btn-primary" type="submit">Save hero section</button>
     </form>
 </section>
 

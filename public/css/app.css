@@ -1603,3 +1603,1135 @@ h1 span { color: var(--primary); }
     .acc-actions .btn, .acc-actions form { width: 100%; }
     .acc-actions form .btn { width: 100%; }
 }
+
+/* ==========================================================================
+   MineLab-Inspired E-Commerce Investment Hero & ROI Calculator
+   ========================================================================== */
+.minelab-hero {
+    position: relative;
+    padding: clamp(0.4rem, 1.2vw, 0.8rem) 0 0.8rem;
+}
+
+.minelab-banner {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+    padding: clamp(1.4rem, 3.2vw, 2.8rem);
+    border-radius: 1.5rem;
+    background: radial-gradient(circle at 85% 25%, rgba(239, 138, 44, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 10% 80%, rgba(154, 84, 44, 0.18) 0%, transparent 50%),
+                linear-gradient(135deg, #0b121e 0%, #111a2c 55%, #0d1524 100%);
+    border: 1px solid rgba(239, 138, 44, 0.25);
+    box-shadow: 0 16px 40px rgba(11, 18, 30, 0.28);
+    color: #ffffff;
+}
+
+.minelab-banner-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    z-index: 2;
+}
+
+.minelab-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.32rem 0.85rem;
+    border-radius: 2rem;
+    background: rgba(239, 138, 44, 0.12);
+    border: 1px solid rgba(239, 138, 44, 0.35);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #ffbe76;
+    margin-bottom: 0.9rem;
+    text-transform: uppercase;
+}
+
+.minelab-badge-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #ef8a2c;
+    box-shadow: 0 0 10px #ef8a2c;
+    animation: minelab-pulse 1.8s infinite;
+}
+
+@keyframes minelab-pulse {
+    0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 138, 44, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 138, 44, 0); }
+    100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 138, 44, 0); }
+}
+
+.minelab-title {
+    font-family: var(--display);
+    font-size: clamp(1.85rem, 4.2vw, 3.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin: 0 0 0.85rem;
+}
+
+.minelab-title span {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffe299 0%, #ef8a2c 60%, #ff832a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.minelab-desc {
+    color: #b7c4d7;
+    font-size: clamp(0.9rem, 1.4vw, 1.02rem);
+    line-height: 1.5;
+    margin: 0 0 1.4rem;
+    max-width: 33rem;
+}
+
+.minelab-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.4rem;
+}
+
+.minelab-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.78rem 1.5rem;
+    border-radius: 0.85rem;
+    font-family: var(--display);
+    font-size: 1rem;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.minelab-btn-primary {
+    background: linear-gradient(135deg, #ef8a2c 0%, #df7416 100%);
+    color: #ffffff;
+    box-shadow: 0 8px 22px rgba(239, 138, 44, 0.4);
+}
+
+.minelab-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(239, 138, 44, 0.55);
+}
+
+.minelab-btn-outline {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    border: 1px solid rgba(239, 138, 44, 0.35);
+}
+
+.minelab-btn-outline:hover {
+    background: rgba(239, 138, 44, 0.15);
+    border-color: #ef8a2c;
+    transform: translateY(-2px);
+}
+
+.minelab-trust-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem 1.2rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #a5b4cb;
+}
+
+.minelab-trust-features .trust-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.minelab-trust-features .trust-item svg {
+    color: #ef8a2c;
+    flex-shrink: 0;
+}
+
+.minelab-banner-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.minelab-art-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 25rem;
+}
+
+.minelab-art-glow {
+    position: absolute;
+    inset: 10%;
+    background: radial-gradient(circle, rgba(239, 138, 44, 0.3) 0%, transparent 65%);
+    filter: blur(28px);
+    pointer-events: none;
+}
+
+.minelab-art-svg,
+.minelab-art-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 1.25rem;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(239, 138, 44, 0.35);
+    filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.45));
+}
+
+/* Dynamic Hero Slider */
+.minelab-slides-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(239, 138, 44, 0.35);
+    background: #0b121e;
+    aspect-ratio: 16 / 10;
+}
+
+.minelab-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-100%, 0, 0);
+    transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
+    will-change: transform, opacity;
+}
+
+.minelab-slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0);
+    z-index: 2;
+}
+
+.minelab-slide-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+}
+
+.minelab-slide .minelab-art-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    filter: none;
+}
+
+.minelab-slide-caption {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(11, 18, 30, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(239, 138, 44, 0.35);
+    color: #e6edf8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: 0.5rem;
+    z-index: 3;
+    letter-spacing: 0.03em;
+}
+
+.minelab-slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(14, 22, 36, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(239, 138, 44, 0.4);
+    color: #f7a046;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    z-index: 5;
+    transition: background 0.2s, transform 0.2s, color 0.2s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.minelab-slider-btn:hover {
+    background: #ef8a2c;
+    color: #ffffff;
+    transform: translateY(-50%) scale(1.08);
+}
+
+.minelab-slider-btn.prev-btn {
+    left: -12px;
+}
+
+.minelab-slider-btn.next-btn {
+    right: -12px;
+}
+
+.minelab-slider-dots {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    z-index: 4;
+}
+
+.minelab-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    border: none;
+    background: rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    transition: width 0.3s ease, background 0.3s ease;
+    padding: 0;
+}
+
+.minelab-dot.is-active {
+    width: 22px;
+    background: #ef8a2c;
+    box-shadow: 0 0 8px rgba(239, 138, 44, 0.7);
+}
+
+/* Continuous Dynamic Ribbon Moving Left to Right */
+.minelab-ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+    background: rgba(11, 18, 30, 0.65);
+    border-top: 1px solid rgba(239, 138, 44, 0.2);
+    border-bottom: 1px solid rgba(239, 138, 44, 0.2);
+    padding: 0.65rem 0;
+    margin-top: 1.25rem;
+    position: relative;
+    border-radius: 0.75rem;
+}
+
+.minelab-ticker-track {
+    width: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.minelab-ticker-content {
+    display: flex;
+    width: max-content;
+    gap: 1.25rem;
+}
+
+.minelab-ticker-ltr {
+    animation: tickerMoveLtr 24s linear infinite;
+}
+
+.minelab-ticker-ltr:hover {
+    animation-play-state: paused;
+}
+
+@keyframes tickerMoveLtr {
+    0% {
+        transform: translate3d(-50%, 0, 0);
+    }
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.minelab-ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.85rem;
+    background: rgba(20, 31, 48, 0.75);
+    border: 1px solid rgba(239, 138, 44, 0.25);
+    border-radius: 2rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.minelab-ticker-item img {
+    width: 32px;
+    height: 22px;
+    object-fit: cover;
+    border-radius: 0.35rem;
+}
+
+.minelab-ticker-item span {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #cbd5e1;
+    letter-spacing: 0.02em;
+}
+
+.minelab-floating-card {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(14, 22, 36, 0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(239, 138, 44, 0.4);
+    border-radius: 0.85rem;
+    padding: 0.5rem 0.8rem;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+}
+
+.floating-card-icon {
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    background: #ef8a2c;
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.floating-card-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.floating-card-text b {
+    font-size: 0.78rem;
+    color: #ffffff;
+    font-family: var(--display);
+    line-height: 1.2;
+}
+
+.floating-card-text span {
+    font-size: 0.68rem;
+    color: #ef8a2c;
+    font-weight: 800;
+}
+
+.floating-card-pill {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    padding: 0.18rem 0.45rem;
+    border-radius: 0.4rem;
+    background: rgba(60, 180, 75, 0.2);
+    color: #3cb44b;
+    border: 1px solid rgba(60, 180, 75, 0.4);
+}
+
+/* ==========================================================================
+   MineLab Signature: "How Much Will I Earn?" Interactive Calculator Card
+   ========================================================================== */
+.minelab-calc-card {
+    position: relative;
+    background: linear-gradient(135deg, #10192a 0%, #152238 100%);
+    border: 1px solid rgba(239, 138, 44, 0.3);
+    border-radius: 1.35rem;
+    padding: clamp(1.1rem, 2.5vw, 1.8rem);
+    margin-top: 1.2rem;
+    box-shadow: 0 14px 35px rgba(11, 18, 30, 0.24);
+    color: #ffffff;
+}
+
+.minelab-calc-card .calc-head {
+    text-align: center;
+    margin-bottom: 1.2rem;
+}
+
+.minelab-calc-card .calc-head h3 {
+    font-family: var(--display);
+    font-size: clamp(1.25rem, 2.4vw, 1.65rem);
+    color: #ffffff;
+    margin: 0 0 0.3rem;
+    letter-spacing: -0.01em;
+}
+
+.minelab-calc-card .calc-head p {
+    color: #a4b4cc;
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+.minelab-calc-card .calc-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.calc-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.calc-control-group label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #e1b489;
+}
+
+.calc-select-wrap {
+    position: relative;
+}
+
+.calc-select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 0.85rem;
+    background: #0b1320;
+    border: 1px solid rgba(239, 138, 44, 0.38);
+    color: #ffffff;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 700;
+    outline: none;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    cursor: pointer;
+}
+
+.calc-select:focus {
+    border-color: #ef8a2c;
+    box-shadow: 0 0 0 3px rgba(239, 138, 44, 0.25);
+}
+
+.calc-select option {
+    background: #0b1320;
+    color: #ffffff;
+    padding: 0.5rem;
+}
+
+.calc-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.65rem;
+}
+
+.calc-metric-item {
+    background: #0b1320;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.95rem;
+    padding: 0.8rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.calc-metric-item .metric-label {
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: #8fa1bc;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.calc-metric-item .metric-val {
+    font-size: 1.05rem;
+    font-weight: 800;
+    font-family: var(--display);
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.calc-metric-item .metric-val-accent {
+    color: #ffbe76;
+}
+
+.calc-metric-highlight {
+    background: linear-gradient(135deg, rgba(239, 138, 44, 0.15) 0%, rgba(154, 84, 44, 0.2) 100%);
+    border-color: rgba(239, 138, 44, 0.45);
+}
+
+@media (min-width: 600px) {
+    .calc-metric-highlight {
+        grid-column: span 2;
+    }
+}
+
+.metric-highlight-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.metric-val-gold {
+    font-size: 1.35rem;
+    color: #ffd67a;
+    font-family: var(--display);
+    font-weight: 900;
+    text-shadow: 0 0 14px rgba(239, 138, 44, 0.4);
+}
+
+.roi-pill {
+    display: inline-block;
+    padding: 0.22rem 0.55rem;
+    border-radius: 2rem;
+    background: #ef8a2c;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    font-family: var(--display);
+}
+
+.calc-action-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.4rem;
+}
+
+.calc-cta {
+    width: 100%;
+    max-width: 24rem;
+}
+
+.minelab-subhero {
+    margin-top: 1.2rem;
+}
+
+@media (min-width: 900px) {
+    .minelab-banner {
+        grid-template-columns: 1.15fr 0.85fr;
+        align-items: center;
+        gap: 2rem;
+    }
+}
+
+/* ==========================================================================
+   Hero Slider Studio (Full-Width Studio Architecture & High-Visibility UI)
+   ========================================================================== */
+
+.studio-page-wrapper {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.page-head.wide.studio-head {
+    width: 100%;
+    max-width: 100%;
+    text-align: left;
+    margin: 1rem 0 0.5rem;
+    padding: 0;
+}
+
+.page-head.wide.studio-head .kicker {
+    text-align: left;
+    color: var(--primary);
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.page-head.wide.studio-head h1 {
+    text-align: left;
+    font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+    margin: 0.2rem 0;
+}
+
+.page-head.wide.studio-head .sub {
+    text-align: left;
+    margin: 0.35rem 0 0.85rem;
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+/* Dashboard Metric Pills (High Contrast & Perfectly Legible) */
+.hero-studio-dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.85rem;
+    width: 100%;
+}
+
+.studio-stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #ffffff !important;
+    border: 1.5px solid #d1d5db;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.88rem;
+    color: #0f172a !important;
+    font-weight: 700;
+}
+
+.studio-stat-pill .pill-text-primary {
+    color: #0f172a !important;
+    font-weight: 800;
+    font-size: 0.88rem;
+}
+
+.studio-stat-pill .pill-text-regular {
+    color: #1e293b !important;
+    font-weight: 700;
+    font-size: 0.88rem;
+}
+
+.studio-stat-pill .pill-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #ffffff !important;
+    background: #ea580c !important;
+    padding: 0.2rem 0.55rem;
+    border-radius: 0.4rem;
+    letter-spacing: 0.04em;
+    display: inline-block;
+}
+
+.studio-stat-pill .pill-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.studio-stat-pill .pill-dot.is-live {
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
+}
+
+.studio-stat-pill .pill-dot.is-warn {
+    background: #f59e0b;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.7);
+}
+
+/* Studio Mini Live Simulator */
+.studio-live-box {
+    background: #ffffff;
+    border: 1.5px solid rgba(239, 138, 44, 0.35);
+    border-radius: 1.25rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.studio-live-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.85rem;
+}
+
+.live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 800;
+}
+
+.pulse-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ef8a2c;
+    box-shadow: 0 0 10px #ef8a2c;
+    animation: livePulse 2s infinite ease-in-out;
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+.studio-sim-frame {
+    position: relative;
+    width: 100%;
+    max-width: 44rem;
+    margin: 0 auto;
+    aspect-ratio: 16 / 8.5;
+    background: #0b121e;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(239, 138, 44, 0.35);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.sim-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-100%, 0, 0);
+    will-change: transform, opacity;
+}
+
+.sim-slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0);
+    z-index: 2;
+}
+
+.sim-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.sim-caption {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(11, 18, 30, 0.88);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(239, 138, 44, 0.4);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.3rem 0.75rem;
+    border-radius: 0.5rem;
+    z-index: 3;
+}
+
+.sim-dots {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    display: flex;
+    gap: 0.35rem;
+    z-index: 4;
+}
+
+.sim-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
+.sim-dot.is-active {
+    width: 16px;
+    border-radius: 3px;
+    background: #ef8a2c;
+}
+
+/* 4-Slot Responsive Grid (Spreads Across Full Page) */
+.hero-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.hero-slot-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 1.25rem;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.hero-slot-card:hover {
+    border-color: rgba(239, 138, 44, 0.5);
+    box-shadow: 0 8px 24px rgba(239, 138, 44, 0.1);
+}
+
+.hero-slot-card.is-filled {
+    border: 1.5px solid rgba(239, 138, 44, 0.45);
+}
+
+.hero-slot-card.is-empty {
+    background: #fafaf9;
+    border: 2px dashed #cbd5e1;
+}
+
+.slot-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+}
+
+.slot-badge {
+    font-family: var(--display);
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #9a542c;
+    background: #fff4ea;
+    border: 1px solid #fed7aa;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.4rem;
+    letter-spacing: 0.05em;
+}
+
+.slot-badge-empty {
+    color: #64748b;
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.slot-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.85rem;
+    overflow: hidden;
+    border: 1px solid rgba(239, 138, 44, 0.35);
+    margin-bottom: 0.85rem;
+    background: #0b121e;
+}
+
+.slot-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.slot-thumb-label {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    background: rgba(11, 18, 30, 0.85);
+    border: 1px solid var(--line);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.35rem;
+    max-width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.slot-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.25rem;
+}
+
+.hero-slot-card .label-text {
+    display: block;
+    font-size: 0.8rem;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+}
+
+.hero-slot-card .field-pill {
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    color: #0f172a;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border-radius: 0.7rem;
+    padding: 0.55rem 0.85rem;
+    width: 100%;
+}
+
+.hero-slot-card .field-pill:focus {
+    background: #ffffff;
+    border-color: #ef8a2c;
+    box-shadow: 0 0 0 3px rgba(239, 138, 44, 0.15);
+}
+
+.slot-actions {
+    margin-top: 0.4rem;
+}
+
+.slot-actions .btn {
+    width: 100%;
+}
+
+.slot-secondary-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.65rem;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.slot-secondary-actions form {
+    margin: 0;
+}
+
+/* Empty Dropzone Card */
+.empty-dropzone {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    margin-bottom: 0.85rem;
+    border: 1.5px dashed #cbd5e1;
+}
+
+.dropzone-icon {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: #fff7ed;
+    color: #ea580c;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0 auto 0.5rem auto;
+    border: 1px solid #fed7aa;
+}
+
+.empty-dropzone strong {
+    display: block;
+    font-size: 0.95rem;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+}
+
+.empty-dropzone p {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* ==========================================================================
+   Full-Width Hero Settings Form (Spreads Left to Right Across Page)
+   ========================================================================== */
+
+.studio-full-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    background: #ffffff;
+    border: 1.5px solid rgba(69, 56, 44, 0.12);
+    border-radius: 1.5rem;
+    padding: clamp(1.25rem, 2.5vw, 2.25rem);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    margin-top: 1rem;
+    box-sizing: border-box;
+}
+
+.studio-grid-three {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+@media (min-width: 860px) {
+    .studio-grid-three {
+        grid-template-columns: 1.2fr 1fr;
+    }
+}
+
+@media (min-width: 1150px) {
+    .studio-grid-three {
+        grid-template-columns: 1.3fr 1fr 1fr;
+    }
+}
+
+.studio-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.studio-full-card fieldset {
+    border: 1.5px solid #e2e8f0;
+    background: #fbfbfb;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.studio-full-card legend {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #0f172a;
+    padding: 0 0.5rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.4rem;
+}
+
+.studio-full-card label {
+    display: block;
+    margin: 0;
+}
+
+.studio-full-card label span {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.35rem;
+}
+
+.studio-full-card .field-pill {
+    width: 100%;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    color: #0f172a;
+    font-weight: 600;
+    font-size: 0.92rem;
+    border-radius: 0.75rem;
+    padding: 0.65rem 0.95rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.studio-full-card .field-pill:focus {
+    border-color: #ef8a2c;
+    box-shadow: 0 0 0 3px rgba(239, 138, 44, 0.15);
+    background: #ffffff;
+}
+
+.studio-full-card textarea.field-pill {
+    min-height: 5.5rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.studio-save-action .btn {
+    border-radius: 0.85rem;
+    box-shadow: 0 4px 14px rgba(239, 138, 44, 0.35);
+}
+
+
+

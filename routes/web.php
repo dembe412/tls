@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminHeroController;
 use App\Http\Controllers\AdminNewsController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AuthController;
@@ -59,6 +60,13 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('index');
+        Route::get('/hero', [AdminHeroController::class, 'index'])->name('hero.index');
+        Route::post('/hero/images', [AdminHeroController::class, 'storeImage'])->name('hero.images.store');
+        Route::put('/hero/images/{heroImage}', [AdminHeroController::class, 'updateImage'])->name('hero.images.update');
+        Route::post('/hero/images/{heroImage}/toggle', [AdminHeroController::class, 'toggleImage'])->name('hero.images.toggle');
+        Route::delete('/hero/images/{heroImage}', [AdminHeroController::class, 'destroyImage'])->name('hero.images.destroy');
+        Route::put('/hero/settings', [AdminHeroController::class, 'updateSettings'])->name('hero.settings.update');
+        Route::put('/hero-settings', [AdminController::class, 'updateHeroSettings'])->name('hero-settings.update');
         Route::put('/payment-methods', [AdminController::class, 'updatePaymentMethods'])->name('payment-methods.update');
         Route::post('/purchases/{purchase}/activate', [AdminController::class, 'activate'])->name('activate');
         Route::post('/purchases/{purchase}/reject', [AdminController::class, 'reject'])->name('reject');

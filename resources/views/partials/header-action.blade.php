@@ -8,6 +8,7 @@
                 <button class="btn-signout" type="submit">Sign out</button>
             </form>
             @if (auth()->user()->isAdmin())
+                <a class="btn-signout" href="{{ route('admin.hero.index') }}">Hero images</a>
                 <a class="btn-signout" href="{{ route('security.devices') }}">Devices</a>
             @endif
     @else

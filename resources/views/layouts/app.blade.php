@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" href="{{ asset('images/logo.jpg') }}" type="image/jpeg">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v=34">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v=40">
 </head>
 <body>
     <div class="app-shell">
@@ -49,6 +49,6 @@
         @include('partials.signup-modal')
         @include('partials.profile-modal')
     </div>
-    <script src="{{ asset('js/app.js') }}?v=13"></script>
+    <script src="{{ asset('js/app.js') }}?v=17"></script>
 </body>
 </html>

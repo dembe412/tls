@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\BonusCode;
+use App\Models\HeroSetting;
 use App\Models\NewsArticle;
 use App\Models\PaymentSetting;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\User;
 use App\Models\Withdrawal;
+use App\Support\Media;
 use App\Support\Money;
 use App\Support\PaymentMethods;
 use App\Support\Referrals;
@@ -43,7 +45,64 @@ class AdminController extends Controller
             'articles' => NewsArticle::query()->with('author')->latest('published_at')->get(),
             'paymentMethods' => PaymentMethods::all(),
             'whatsapp' => PaymentSetting::valueFor('whatsapp', (string) config('support.whatsapp')),
+            'hero' => HeroSetting::allSettings(),
         ]);
+    }
+
+    public function updateHeroSettings(Request $request)
+    {
+        $data = $request->validate([
+            'badge' => ['nullable', 'string', 'max:120'],
+            'title' => ['required', 'string', 'max:150'],
+            'title_highlight' => ['nullable', 'string', 'max:150'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'cta_text' => ['nullable', 'string', 'max:60'],
+            'cta_url' => ['nullable', 'string', 'max:255'],
+            'secondary_text' => ['nullable', 'string', 'max:60'],
+            'secondary_url' => ['nullable', 'string', 'max:255'],
+            'trust_1' => ['nullable', 'string', 'max:80'],
+            'trust_2' => ['nullable', 'string', 'max:80'],
+            'trust_3' => ['nullable', 'string', 'max:80'],
+            'show_calculator' => ['nullable'],
+            'image' => ['nullable', 'image', 'max:10240'],
+            'remove_image' => ['nullable'],
+        ]);
+
+        if ($request->boolean('remove_image')) {
+            $oldPath = HeroSetting::valueFor('image_path');
+            if ($oldPath) {
+                Media::delete($oldPath);
+            }
+            HeroSetting::query()->updateOrCreate(['key' => 'image_path'], ['value' => '']);
+        } elseif ($request->hasFile('image')) {
+            $oldPath = HeroSetting::valueFor('image_path');
+            if ($oldPath) {
+                Media::delete($oldPath);
+            }
+            $path = Media::store($request->file('image'), 'hero');
+            HeroSetting::query()->updateOrCreate(['key' => 'image_path'], ['value' => $path]);
+        }
+
+        $fields = [
+            'badge' => $data['badge'] ?? '',
+            'title' => $data['title'],
+            'title_highlight' => $data['title_highlight'] ?? '',
+            'description' => $data['description'] ?? '',
+            'cta_text' => $data['cta_text'] ?? 'Start Earning',
+            'cta_url' => $data['cta_url'] ?? '#catalog',
+            'secondary_text' => $data['secondary_text'] ?? '',
+            'secondary_url' => $data['secondary_url'] ?? '',
+            'trust_1' => $data['trust_1'] ?? '',
+            'trust_2' => $data['trust_2'] ?? '',
+            'trust_3' => $data['trust_3'] ?? '',
+            'show_calculator' => $request->has('show_calculator') ? '1' : '0',
+        ];
+
+        foreach ($fields as $key => $value) {
+            HeroSetting::query()->updateOrCreate(['key' => $key], ['value' => trim((string) $value)]);
+        }
+
+        return redirect()->route('admin.index')->with('success', 'Hero section updated successfully.');
     }
 
     public function updatePaymentMethods(Request $request)
